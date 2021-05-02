@@ -72,6 +72,15 @@ class ZenObj(object):
         :rtype: BBox
         """
 
+    def transformed(self, trans):
+        """
+        Subclasses override this method to implement transformations.
+
+        :type trans: pyservoce.libservoce.transformation
+        :rtype: ZenObj
+        """
+        pass
+
 
 class CompoundZenObj(ZenObj):
     def __init__(self, *args, colour=None):
@@ -94,6 +103,10 @@ class CompoundZenObj(ZenObj):
             min(b.zmin for b in boxes), max(b.zmax for b in boxes)
         )
 
+    def transformed(self, trans):
+        objects = [o.transformed(trans) for o in self.objects]
+        return CompoundZenObj(*objects, colour=self.colour)
+
 
 class SimpleZenObj(ZenObj):
     def __init__(self, shape, colour=None):
@@ -111,3 +124,5 @@ class SimpleZenObj(ZenObj):
     def bbox(self):
         return BBox.from_zen_bbox(self.shape.bbox())
 
+    def transformed(self, trans):
+        return SimpleZenObj(trans(self.shape), colour=self.colour)

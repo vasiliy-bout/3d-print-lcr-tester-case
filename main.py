@@ -92,15 +92,23 @@ def create_case_top_model():
 def main():
     pcb_model = create_pcd_model()
     battery_model = create_battery_model()
+
+    pcb_model = pcb_model.transformed(
+        move(pcb_margin, pcb_margin, case_size_z + case_width - Pcb.size.z - Socket.size.z)
+    )
+    battery_model = battery_model.transformed(
+        move(EPS + Pcb.size.x + EPS + 4 + EPS, EPS, EPS)
+    )
+
     case_bottom_model = create_case_bottom_model()
     case_top_model = create_case_top_model()
 
-    pcb_model.display(move(pcb_margin,
-                           pcb_margin,
-                           case_size_z + case_width - Pcb.size.z - Socket.size.z))
-    battery_model.display(move(EPS + Pcb.size.x + EPS + 4 + EPS, EPS, EPS))
-    # case_bottom_model.display()
-    # case_top_model.display(move(0.0, 0.0, case_size_z))
+    case_top_model = case_top_model.transformed(move(0.0, 0.0, case_size_z))
+
+    pcb_model.display()
+    battery_model.display()
+    case_bottom_model.display()
+    case_top_model.display()
 
     show(standalone=True)
 
