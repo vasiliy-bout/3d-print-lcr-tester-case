@@ -4,7 +4,7 @@ from zencad import *
 
 from api import SimpleZenObj, ZenModel
 from config import EPS, EPS2
-from pcb_model import Pcb
+from pcb_model import Pcb, Lcd, LcdLight, LcdWires, LcdMount
 
 
 def _x(size): return size[0]
@@ -15,19 +15,6 @@ def _y(size): return size[1]
 
 def _z(size): return size[2]
 
-
-lcd_offset_left = 6.5
-lcd_size = (58.6, 38.5, 6.6 - Pcb.width)
-lcd_light_points = points([
-    (0.0, 0.0, 0.0),
-    (0.0, 34.0, 0.0),
-    (7.2, 22.0, 0.0),
-    (7.2, 12.0, 0.0)
-])
-lcd_light_h = 3.7 - Pcb.width
-
-lcd_wires_size = (9.5, 3.5, 7.0)
-lcd_wires_offset = 30.5
 
 socket_size = (33.0, 15.0, 12.7 - Pcb.width)
 
@@ -66,9 +53,6 @@ smd_points_list = [
     points([
         (63.0, 24.0, 0.0), (63.0, 28.0, 0.0), (68.0, 28.0, 0.0), (68.0, 24.0, 0.0)
     ]),
-    points([
-        (67.0, 35.0, 0.0), (67.0, 43.0, 0.0), (73.0, 43.0, 0.0), (73.0, 35.0, 0.0)
-    ]),
 ]
 smd_h = 3
 
@@ -84,7 +68,7 @@ battery_margin = 0.5
 
 case_size_x = (pcb_margin + Pcb.size.x + pcb_margin + 4 +
                battery_margin + _x(battery_size) + battery_margin)
-case_size_y = pcb_margin + Pcb.size.y + _y(lcd_wires_size) + pcb_margin
+case_size_y = pcb_margin + Pcb.size.y + LcdWires.size.y + pcb_margin
 case_size_z = EPS + _z(battery_size) + battery_margin
 case_size = (case_size_x, case_size_y, case_size_z)
 case_width = 3.1
@@ -92,28 +76,10 @@ case_width = 3.1
 
 def create_pcd_model():
     pcb = Pcb()
-
-    lcd = box(size=lcd_size)
-    lcd = lcd.move(
-        lcd_offset_left,
-        Pcb.size.y - _y(lcd_size),
-        Pcb.size.z
-    )
-    lcd_light = extrude(
-        proto=polysegment(lcd_light_points, closed=True).fill(),
-        vec=lcd_light_h
-    )
-    lcd_light = lcd_light.move(
-        lcd_offset_left + _x(lcd_size),
-        Pcb.size.y - _y(lcd_size),
-        Pcb.size.z
-    )
-    lcd_wires = box(size=lcd_wires_size)
-    lcd_wires = lcd_wires.move(
-        lcd_wires_offset,
-        Pcb.size.y,
-        0.0
-    )
+    lcd = Lcd()
+    lcd_light = LcdLight()
+    lcd_wires = LcdWires()
+    lcd_mount = LcdMount()
 
     socket = box(size=socket_size)
     socket = socket.moveZ(Pcb.size.z)
@@ -168,9 +134,10 @@ def create_pcd_model():
 
     model = ZenModel(
         pcb,
-        SimpleZenObj(lcd, color.green),
-        SimpleZenObj(lcd_light, color.white),
-        SimpleZenObj(lcd_wires, color.mech),
+        lcd,
+        lcd_light,
+        lcd_wires,
+        lcd_mount,
         SimpleZenObj(socket, color.cian),
         SimpleZenObj(lever, color.mech),
         SimpleZenObj(button, color.mech),
