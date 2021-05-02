@@ -3,6 +3,9 @@ from zencad import *
 from api import Size, SimpleZenObj
 from config import EPS, EPS2
 
+# Fix the incorrectly named color
+color.cyan = color.cian
+
 
 class Pcb(SimpleZenObj):
     colour = color.yellow
@@ -95,3 +98,46 @@ class LcdMount(SimpleZenObj):
         )
         mount = mount.move(self.offset)
         super().__init__(mount)
+
+
+class Socket(SimpleZenObj):
+    colour = color.cyan
+
+    size = Size(33.0, 15.0, 12.7 - Pcb.width)
+
+    def __init__(self):
+        socket = box(size=self.size)
+        socket = socket.moveZ(Pcb.size.z)
+        super().__init__(socket)
+
+
+class SocketLever(SimpleZenObj):
+    colour = color.mech
+
+    radius = 1.0
+    length = 5.0
+    offset = vector3(0.0, radius, 7.8 - radius)
+
+    def __init__(self):
+        lever = cylinder(r=self.radius, h=self.length)
+        lever = lever.rotateY(deg(-90))
+        lever = lever.move(self.offset)
+        super().__init__(lever)
+
+
+class SocketLevelCap(SimpleZenObj):
+    colour = color.cyan
+
+    radius = 2.5
+    length = 7.5
+    offset = vector3(
+        SocketLever.offset.x - SocketLever.length,
+        SocketLever.offset.y,
+        SocketLever.offset.z
+    )
+
+    def __init__(self):
+        cap = cylinder(r=self.radius, h=self.length)
+        cap = cap.rotateY(deg(-90))
+        cap = cap.move(self.offset)
+        super().__init__(cap)

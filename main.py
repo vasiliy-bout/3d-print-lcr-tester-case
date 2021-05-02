@@ -4,7 +4,7 @@ from zencad import *
 
 from api import SimpleZenObj, ZenModel
 from config import EPS, EPS2
-from pcb_model import Pcb, Lcd, LcdLight, LcdWires, LcdMount
+from pcb_model import Pcb, Lcd, LcdLight, LcdWires, LcdMount, Socket, SocketLever, SocketLevelCap
 
 
 def _x(size): return size[0]
@@ -15,14 +15,6 @@ def _y(size): return size[1]
 
 def _z(size): return size[2]
 
-
-socket_size = (33.0, 15.0, 12.7 - Pcb.width)
-
-lever_r = 1.0
-lever_l = 5.0
-lever_offset = 7.7 - lever_r - Pcb.width
-lever_cap_r = 2.5
-lever_cap_l = 7.5
 
 button_size = (14.0, 15.0, 5.0 - Pcb.width)
 button_cap_r0 = 11.5 / 2.0
@@ -80,9 +72,9 @@ def create_pcd_model():
     lcd_light = LcdLight()
     lcd_wires = LcdWires()
     lcd_mount = LcdMount()
-
-    socket = box(size=socket_size)
-    socket = socket.moveZ(Pcb.size.z)
+    socket = Socket()
+    socket_lever = SocketLever()
+    socket_lever_cap = SocketLevelCap()
 
     button = box(size=button_size)
     button = button.move(
@@ -100,13 +92,6 @@ def create_pcd_model():
         button_cap_r1 + button_cap_offset_y,
         Pcb.size.z
     )
-
-    lever = unify(
-        cylinder(r=lever_r, h=lever_l + EPS) +
-        cylinder(r=lever_cap_r, h=lever_cap_l).moveZ(lever_l)
-    )
-    lever = lever.rotateY(deg(-90))
-    lever = lever.move(0.0, lever_r, lever_offset + Pcb.size.z)
 
     window = box(size=window_size)
     window = window.move(
@@ -138,8 +123,9 @@ def create_pcd_model():
         lcd_light,
         lcd_wires,
         lcd_mount,
-        SimpleZenObj(socket, color.cian),
-        SimpleZenObj(lever, color.mech),
+        socket,
+        socket_lever,
+        socket_lever_cap,
         SimpleZenObj(button, color.mech),
         SimpleZenObj(cap, color.blue),
         SimpleZenObj(window, color.mech),
@@ -180,11 +166,11 @@ def create_case_top_model():
     socket_hole_points = points([
         (-case_width, 0.0, 0.0),
         (8.0, pcb_margin - EPS, 0.0),
-        (pcb_margin + socket_size[0] + EPS, pcb_margin - EPS, 0.0),
-        (pcb_margin + socket_size[0] + EPS, pcb_margin + socket_size[1] + EPS, 0.0),
-        (pcb_margin - EPS, pcb_margin + socket_size[1] + EPS, 0.0),
-        (pcb_margin - EPS, 2 * lever_r + EPS + pcb_margin, 0.0),
-        (-case_width, 2 * lever_r + EPS + pcb_margin, 0.0),
+        (pcb_margin + Socket.size.x + EPS, pcb_margin - EPS, 0.0),
+        (pcb_margin + Socket.size.x + EPS, pcb_margin + Socket.size.y + EPS, 0.0),
+        (pcb_margin - EPS, pcb_margin + Socket.size.y + EPS, 0.0),
+        (pcb_margin - EPS, 2 * SocketLever.radius + EPS + pcb_margin, 0.0),
+        (-case_width, 2 * SocketLever.radius + EPS + pcb_margin, 0.0),
     ])
     socket_hole = extrude(
         proto=polysegment(socket_hole_points, closed=True).fill(),
@@ -206,7 +192,7 @@ def main():
 
     pcb_model.display(move(pcb_margin,
                            pcb_margin,
-                           case_size_z + case_width - Pcb.width - _z(socket_size)))
+                           case_size_z + case_width - Pcb.width - Socket.size.z))
     battery_model.display(move(EPS + Pcb.size.x + EPS + 4 + EPS, EPS, EPS))
     case_bottom_model.display()
     case_top_model.display(move(0.0, 0.0, case_size_z))
