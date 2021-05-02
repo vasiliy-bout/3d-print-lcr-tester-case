@@ -74,8 +74,8 @@ def create_case_top_model():
         (pcb_margin + Socket.size.x + EPS, pcb_margin - EPS, 0.0),
         (pcb_margin + Socket.size.x + EPS, pcb_margin + Socket.size.y + EPS, 0.0),
         (pcb_margin - EPS, pcb_margin + Socket.size.y + EPS, 0.0),
-        (pcb_margin - EPS, 2 * SocketLever.radius + EPS + pcb_margin, 0.0),
-        (-case_width, 2 * SocketLever.radius + EPS + pcb_margin, 0.0),
+        (pcb_margin - EPS, Socket.room_size.y + EPS + pcb_margin, 0.0),
+        (-case_width, Socket.room_size.y + EPS + pcb_margin, 0.0),
     ])
     socket_hole = extrude(
         proto=polysegment(socket_hole_points, closed=True).fill(),
