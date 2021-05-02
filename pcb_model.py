@@ -19,7 +19,7 @@ class Pcb(SimpleZenObj):
     ])
 
     def __init__(self):
-        pcb = box(size=self.size.tuple())
+        pcb = box(size=self.size)
 
         hole_proto = cylinder(r=self.hole_r, h=self.size.z + EPS2).moveZ(-EPS)
         for v in self.hole_vectors:

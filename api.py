@@ -1,19 +1,9 @@
+from collections import namedtuple
+
 from zencad import *
 
 
-class Size(object):
-    def __init__(self, x, y, z):
-        """
-        :type x: float
-        :type y: float
-        :type z: float
-        """
-        self.x = x
-        self.y = y
-        self.z = z
-
-    def tuple(self):
-        return self.x, self.y, self.z
+Size = namedtuple('Size', ['x', 'y', 'z'])
 
 
 class BBox(object):
