@@ -2,7 +2,7 @@
 
 from zencad import *
 
-from api import SimpleZenObj, ZenModel
+from api import SimpleZenObj, CompoundZenObj
 from config import EPS, EPS2
 from device_model import (
     Pcb, Lcd, LcdLight, LcdWires, LcdMount, Socket, SocketLever, SocketLevelCap, Button, ButtonCap,
@@ -22,7 +22,7 @@ case_width = 3.1
 
 
 def create_pcd_model():
-    return ZenModel(
+    return CompoundZenObj(
         Pcb(),
         Lcd(),
         LcdLight(),
@@ -44,7 +44,7 @@ def create_pcd_model():
 
 
 def create_battery_model():
-    return ZenModel(
+    return CompoundZenObj(
         Battery()
     )
 
@@ -55,7 +55,7 @@ def create_case_bottom_model():
     ]
     case_proto = box(size=(case_size_x, case_size_y, case_size_z - EPS))
     case = thicksolid(proto=case_proto, t=case_width, refs=refs)
-    return ZenModel(
+    return CompoundZenObj(
         SimpleZenObj(case, color.white)
     )
 
@@ -84,7 +84,7 @@ def create_case_top_model():
     socket_hole = socket_hole.moveZ(-EPS)
     case = case - socket_hole
 
-    return ZenModel(
+    return CompoundZenObj(
         SimpleZenObj(case, color.white)
     )
 

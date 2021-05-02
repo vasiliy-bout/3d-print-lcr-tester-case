@@ -2,7 +2,6 @@ from collections import namedtuple
 
 from zencad import *
 
-
 Size = namedtuple('Size', ['x', 'y', 'z'])
 
 
@@ -75,13 +74,13 @@ class ZenObj(object):
 
 
 class CompoundZenObj(ZenObj):
-    def __init__(self, objects, colour=None):
+    def __init__(self, *args, colour=None):
         """
-        :type objects: list[ZenObj]
+        :type args: ZenObj
         :type colour: None | Color
         """
         super().__init__(colour)
-        self.objects = list(objects)
+        self.objects = list(args)
 
     def display(self, trans=None, colour=None):
         for o in self.objects:
@@ -112,27 +111,3 @@ class SimpleZenObj(ZenObj):
     def bbox(self):
         return BBox.from_zen_bbox(self.shape.bbox())
 
-
-class ZenModel(object):
-    def __init__(self, *args):
-        """
-        Creates a model from one or several `ZenObj` objects.
-
-        :type args: ZenObj
-        """
-        self.objects = [*args]
-
-    def add(self, obj):
-        """
-        :type obj: ZenObj
-        """
-        self.objects.append(obj)
-
-    def display(self, trans=None, colour=None):
-        """
-        :type trans: None | pyservoce.libservoce.transformation
-        :type colour: None | Color
-        :rtype: None
-        """
-        for o in self.objects:
-            o.display(trans, colour=colour)
