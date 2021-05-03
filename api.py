@@ -15,12 +15,39 @@ class BBox(object):
         :param zmin: float
         :param zmax: float
         """
-        self.xmin = xmin
-        self.xmax = xmax
-        self.ymin = ymin
-        self.ymax = ymax
-        self.zmin = zmin
-        self.zmax = zmax
+        self.__xmin = xmin
+        self.__xmax = xmax
+        self.__ymin = ymin
+        self.__ymax = ymax
+        self.__zmin = zmin
+        self.__zmax = zmax
+
+        self.__size = None
+        self.__offset = None
+
+    @property
+    def xmin(self):
+        return self.__xmin
+
+    @property
+    def xmax(self):
+        return self.__xmax
+
+    @property
+    def ymin(self):
+        return self.__ymin
+
+    @property
+    def ymax(self):
+        return self.__ymax
+
+    @property
+    def zmin(self):
+        return self.__zmin
+
+    @property
+    def zmax(self):
+        return self.__zmax
 
     @staticmethod
     def from_zen_bbox(bbox):
@@ -32,29 +59,35 @@ class BBox(object):
 
     def __add__(self, other):
         return BBox(
-            min(self.xmin, other.xmin), max(self.xmax, other.xmax),
-            min(self.ymin, other.ymin), max(self.ymax, other.ymax),
-            min(self.zmin, other.zmin), max(self.zmax, other.zmax)
+            min(self.__xmin, other.xmin), max(self.__xmax, other.xmax),
+            min(self.__ymin, other.ymin), max(self.__ymax, other.ymax),
+            min(self.__zmin, other.zmin), max(self.__zmax, other.zmax)
         )
 
-    def get_size(self):
-        return Size(
-            self.xmax - self.xmin,
-            self.ymax - self.ymin,
-            self.zmax - self.zmin
-        )
+    @property
+    def size(self):
+        if not self.__size:
+            self.__size = Size(
+                self.__xmax - self.__xmin,
+                self.__ymax - self.__ymin,
+                self.__zmax - self.__zmin
+            )
+        return self.__size
 
-    def get_offset(self):
-        return vector3(self.xmin, self.ymin, self.zmin)
+    @property
+    def offset(self):
+        if not self.__offset:
+            self.__offset = vector3(self.__xmin, self.__ymin, self.__zmin)
+        return self.__offset
 
     def with_border(self, width):
         return BBox(
-            self.xmin - width,
-            self.xmax + width,
-            self.ymin - width,
-            self.ymax + width,
-            self.zmin - width,
-            self.zmax + width
+            self.__xmin - width,
+            self.__xmax + width,
+            self.__ymin - width,
+            self.__ymax + width,
+            self.__zmin - width,
+            self.__zmax + width
         )
 
 

@@ -48,19 +48,17 @@ class CaseTop(SimpleZenObj):
         )
         case = case.move(self.offset)
 
-        bbox = device.socket.bbox().with_border(EPS)
-        bbox_size = bbox.get_size()
-        bbox_offset = bbox.get_offset()
+        socket_bbox = device.socket.bbox().with_border(EPS)
         lever_hole = box(size=(
             CaseProperties.width + EPS2,
             Socket.room_size.y + EPS2,
             Socket.room_size.z + EPS2
         )).move(vector3(
             -CaseProperties.width - EPS,
-            bbox_offset.y,
-            bbox_offset.z + bbox_size.z - Socket.room_size.z - EPS2
+            socket_bbox.offset.y,
+            socket_bbox.offset.z + socket_bbox.size.z - Socket.room_size.z - EPS2
         ))
-        socket_hole = box(bbox_size).move(bbox_offset)
+        socket_hole = box(socket_bbox.size).move(socket_bbox.offset)
         case = case - socket_hole - lever_hole
 
         super().__init__(case)
@@ -83,17 +81,15 @@ class CaseBottom(SimpleZenObj):
             refs=[self.top_center]
         )
 
-        bbox = device.socket.bbox().with_border(EPS)
-        bbox_size = bbox.get_size()
-        bbox_offset = bbox.get_offset()
+        socket_bbox = device.socket.bbox().with_border(EPS)
         lever_hole = box(size=(
             CaseProperties.width + EPS2,
             Socket.room_size.y + EPS2,
             Socket.room_size.z + EPS2
         )).move(vector3(
             -CaseProperties.width - EPS,
-            bbox_offset.y,
-            bbox_offset.z + bbox_size.z - Socket.room_size.z - EPS2
+            socket_bbox.offset.y,
+            socket_bbox.offset.z + socket_bbox.size.z - Socket.room_size.z - EPS2
         ))
         case = case - lever_hole
 
