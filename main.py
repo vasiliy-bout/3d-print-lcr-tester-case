@@ -21,94 +21,100 @@ case_size = (case_size_x, case_size_y, case_size_z)
 case_width = 3.1
 
 
-def create_pcd_model():
+def create_device():
     return CompoundZenObj(
-        Pcb(),
-        Lcd(),
-        LcdLight(),
-        LcdWires(),
-        LcdMount(),
-        LcdLock(),
-        Socket(),
-        SocketLever(),
-        SocketLevelCap(),
-        SocketTerminals(),
-        Button(),
-        ButtonCap(),
-        ButtonMount(),
-        ContactPads(),
-        Quartz(),
-        PowerTerminals(),
-        SurfaceMount(),
+        pcb=Pcb(),
+        lcd=Lcd(),
+        lcd_light=LcdLight(),
+        lcd_wires=LcdWires(),
+        lcd_mounts=LcdMount(),
+        lcd_lock=LcdLock(),
+        socket=Socket(),
+        socket_lever=SocketLever(),
+        socket_lever_cap=SocketLevelCap(),
+        socket_terminals=SocketTerminals(),
+        button=Button(),
+        button_cap=ButtonCap(),
+        button_mount=ButtonMount(),
+        contact_pads=ContactPads(),
+        quarts=Quartz(),
+        power_terminals=PowerTerminals(),
+        surface_mount=SurfaceMount(),
     )
 
 
-def create_battery_model():
-    return CompoundZenObj(
-        Battery()
-    )
+def create_battery():
+    return Battery()
 
 
-def create_case_bottom_model():
+def create_case_bottom(device, battery):
     refs = [
         (case_size_x / 2, case_size_y / 2, case_size_z)
     ]
     case_proto = box(size=(case_size_x, case_size_y, case_size_z - EPS))
     case = thicksolid(proto=case_proto, t=case_width, refs=refs)
-    return CompoundZenObj(
-        SimpleZenObj(case, color.white)
-    )
+
+    bbox = device['socket'].bbox().add_border(EPS)
+    bbox_size = bbox.get_size()
+    bbox_offset = bbox.get_offset()
+    lever_hole = box(size=(
+        case_width + EPS2,
+        Socket.room_size.y + EPS2,
+        Socket.room_size.z + EPS2
+    )).move(vector3(
+        -case_width - EPS,
+        bbox_offset.y,
+        bbox_offset.z + bbox_size.z - Socket.room_size.z - EPS2
+    ))
+    case = case - lever_hole
+
+    return SimpleZenObj(case, color.white)
 
 
-def create_case_top_model():
+def create_case_top(device, battery):
     refs = [
         (case_size_x / 2, case_size_y / 2, 0.0)
     ]
     case_proto = box(size=(case_size_x, case_size_y, EPS))
     case = thicksolid(proto=case_proto, t=case_width, refs=refs)
-    case = case.moveZ(-EPS)
+    case = case.moveZ(case_size_z - EPS)
 
-    socket_hole_points = points([
-        (-case_width, 0.0, 0.0),
-        (8.0, pcb_margin - EPS, 0.0),
-        (pcb_margin + Socket.size.x + EPS, pcb_margin - EPS, 0.0),
-        (pcb_margin + Socket.size.x + EPS, pcb_margin + Socket.size.y + EPS, 0.0),
-        (pcb_margin - EPS, pcb_margin + Socket.size.y + EPS, 0.0),
-        (pcb_margin - EPS, Socket.room_size.y + EPS + pcb_margin, 0.0),
-        (-case_width, Socket.room_size.y + EPS + pcb_margin, 0.0),
-    ])
-    socket_hole = extrude(
-        proto=polysegment(socket_hole_points, closed=True).fill(),
-        vec=case_size_z + EPS2
-    )
-    socket_hole = socket_hole.moveZ(-EPS)
-    case = case - socket_hole
+    bbox = device['socket'].bbox().add_border(EPS)
+    bbox_size = bbox.get_size()
+    bbox_offset = bbox.get_offset()
+    socket_hole = box(bbox_size).move(bbox_offset)
+    lever_hole = box(size=(
+        case_width + EPS2,
+        Socket.room_size.y + EPS2,
+        Socket.room_size.z + EPS2
+    )).move(vector3(
+        -case_width - EPS,
+        bbox_offset.y,
+        bbox_offset.z + bbox_size.z - Socket.room_size.z - EPS2
+    ))
+    case = case - socket_hole - lever_hole
 
-    return CompoundZenObj(
-        SimpleZenObj(case, color.white)
-    )
+    return SimpleZenObj(case, color.white)
 
 
 def main():
-    pcb_model = create_pcd_model()
-    battery_model = create_battery_model()
+    device = create_device()
+    battery = create_battery()
 
-    pcb_model = pcb_model.transformed(
+    device = device.transformed(
         move(pcb_margin, pcb_margin, case_size_z + case_width - Pcb.size.z - Socket.size.z)
     )
-    battery_model = battery_model.transformed(
+    battery = battery.transformed(
         move(EPS + Pcb.size.x + EPS + 4 + EPS, EPS, EPS)
     )
 
-    case_bottom_model = create_case_bottom_model()
-    case_top_model = create_case_top_model()
+    case_bottom = create_case_bottom(device, battery)
+    case_top = create_case_top(device, battery)
 
-    case_top_model = case_top_model.transformed(move(0.0, 0.0, case_size_z))
-
-    pcb_model.display()
-    battery_model.display()
-    case_bottom_model.display()
-    case_top_model.display()
+    device.display()
+    battery.display()
+    case_bottom.display()
+    case_top.display()
 
     show(standalone=True)
 

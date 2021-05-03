@@ -37,6 +37,26 @@ class BBox(object):
             min(self.zmin, other.zmin), max(self.zmax, other.zmax)
         )
 
+    def get_size(self):
+        return Size(
+            self.xmax - self.xmin,
+            self.ymax - self.ymin,
+            self.zmax - self.zmin
+        )
+
+    def get_offset(self):
+        return vector3(self.xmin, self.ymin, self.zmin)
+
+    def add_border(self, width):
+        return BBox(
+            self.xmin - width,
+            self.xmax + width,
+            self.ymin - width,
+            self.ymax + width,
+            self.zmin - width,
+            self.zmax + width
+        )
+
 
 class ZenObj(object):
     """
@@ -83,20 +103,25 @@ class ZenObj(object):
 
 
 class CompoundZenObj(ZenObj):
-    def __init__(self, *args, colour=None):
+    def __init__(self, *args, colour=None, **kwargs):
         """
         :type args: ZenObj
         :type colour: None | Color
+        :type kwargs: ZenObj
         """
         super().__init__(colour)
         self.objects = list(args)
+        self.objects_dict = dict(**kwargs)
+
+    def __all_objects(self):
+        return self.objects + [o for o in self.objects_dict.values()]
 
     def display(self, trans=None, colour=None):
-        for o in self.objects:
+        for o in self.__all_objects():
             o.display(trans, colour=colour or self.colour)
 
     def bbox(self):
-        boxes = [o.bbox() for o in self.objects]
+        boxes = [o.bbox() for o in self.__all_objects()]
         return BBox(
             min(b.xmin for b in boxes), max(b.xmax for b in boxes),
             min(b.ymin for b in boxes), max(b.ymax for b in boxes),
@@ -105,7 +130,14 @@ class CompoundZenObj(ZenObj):
 
     def transformed(self, trans):
         objects = [o.transformed(trans) for o in self.objects]
-        return CompoundZenObj(*objects, colour=self.colour)
+        objects_dict = {k: v.transformed(trans) for k, v in self.objects_dict.items()}
+        return CompoundZenObj(*objects, colour=self.colour, **objects_dict)
+
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self.objects[item]
+        else:
+            return self.objects_dict[item]
 
 
 class SimpleZenObj(ZenObj):
