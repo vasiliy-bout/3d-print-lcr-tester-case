@@ -54,7 +54,7 @@ def create_case_bottom(device, battery):
     case_proto = box(size=(case_size_x, case_size_y, case_size_z - EPS))
     case = thicksolid(proto=case_proto, t=case_width, refs=refs)
 
-    bbox = device['socket'].bbox().add_border(EPS)
+    bbox = device.socket.bbox().add_border(EPS)
     bbox_size = bbox.get_size()
     bbox_offset = bbox.get_offset()
     lever_hole = box(size=(
@@ -79,7 +79,7 @@ def create_case_top(device, battery):
     case = thicksolid(proto=case_proto, t=case_width, refs=refs)
     case = case.moveZ(case_size_z - EPS)
 
-    bbox = device['socket'].bbox().add_border(EPS)
+    bbox = device.socket.bbox().add_border(EPS)
     bbox_size = bbox.get_size()
     bbox_offset = bbox.get_offset()
     socket_hole = box(bbox_size).move(bbox_offset)

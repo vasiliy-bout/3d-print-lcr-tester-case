@@ -139,6 +139,9 @@ class CompoundZenObj(ZenObj):
         else:
             return self.objects_dict[item]
 
+    def __getattr__(self, item):
+        return self.objects_dict[item]
+
 
 class SimpleZenObj(ZenObj):
     def __init__(self, shape, colour=None):
