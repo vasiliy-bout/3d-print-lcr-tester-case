@@ -47,7 +47,7 @@ class BBox(object):
     def get_offset(self):
         return vector3(self.xmin, self.ymin, self.zmin)
 
-    def add_border(self, width):
+    def with_border(self, width):
         return BBox(
             self.xmin - width,
             self.xmax + width,
