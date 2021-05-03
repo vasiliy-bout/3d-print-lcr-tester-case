@@ -1,6 +1,6 @@
 from zencad import *
 
-from api import Size, SimpleZenObj
+from api import Size, SimpleZenObj, CompoundZenObj
 from config import EPS, EPS2, LEVER_ANGLE
 
 # Fix the incorrectly named color
@@ -274,8 +274,8 @@ class PowerTerminals(SimpleZenObj):
 
     def __init__(self):
         terminals = (
-                box(self.size).move(self.offset) +
-                cylinder(r=self.wires_radius, h=self.wires_height).move(self.wires_offset)
+            box(self.size).move(self.offset) +
+            cylinder(r=self.wires_radius, h=self.wires_height).move(self.wires_offset)
         )
         super().__init__(terminals)
 
@@ -284,9 +284,9 @@ class SurfaceMount(SimpleZenObj):
     colour = color.mech
 
     points = points([
-            (8.0, 19.0, 0.0), (8.0, 38.0, 0.0), (22.0, 38.0, 0.0),
-            (27.0, 51.0, 0.0), (43.0, 51.0, 0.0), (55.0, 42.0, 0.0),
-            (55.0, 25.0, 0.0), (46.0, 19.0, 0.0)
+        (8.0, 19.0, 0.0), (8.0, 38.0, 0.0), (22.0, 38.0, 0.0),
+        (27.0, 51.0, 0.0), (43.0, 51.0, 0.0), (55.0, 42.0, 0.0),
+        (55.0, 25.0, 0.0), (46.0, 19.0, 0.0)
     ])
     width = 3
 
@@ -307,3 +307,26 @@ class Battery(SimpleZenObj):
     def __init__(self):
         battery = box(self.size)
         super().__init__(battery)
+
+
+class Device(CompoundZenObj):
+    def __init__(self):
+        super().__init__(
+            pcb=Pcb(),
+            lcd=Lcd(),
+            lcd_light=LcdLight(),
+            lcd_wires=LcdWires(),
+            lcd_mounts=LcdMount(),
+            lcd_lock=LcdLock(),
+            socket=Socket(),
+            socket_lever=SocketLever(),
+            socket_lever_cap=SocketLevelCap(),
+            socket_terminals=SocketTerminals(),
+            button=Button(),
+            button_cap=ButtonCap(),
+            button_mount=ButtonMount(),
+            contact_pads=ContactPads(),
+            quarts=Quartz(),
+            power_terminals=PowerTerminals(),
+            surface_mount=SurfaceMount()
+        )

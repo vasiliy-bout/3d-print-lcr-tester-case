@@ -2,13 +2,9 @@
 
 from zencad import *
 
-from api import SimpleZenObj, CompoundZenObj
+from api import SimpleZenObj
 from config import EPS, EPS2
-from device_model import (
-    Pcb, Lcd, LcdLight, LcdWires, LcdMount, Socket, SocketLever, SocketLevelCap, Button, ButtonCap,
-    ButtonMount, ContactPads, Quartz, PowerTerminals, SocketTerminals, LcdLock, SurfaceMount,
-    Battery
-)
+from device_model import Pcb, LcdWires, Socket, Battery, Device
 
 pcb_margin = 0.4
 battery_margin = 0.5
@@ -19,32 +15,6 @@ case_size_y = pcb_margin + Pcb.size.y + LcdWires.size.y + pcb_margin
 case_size_z = EPS + Battery.size.z + battery_margin
 case_size = (case_size_x, case_size_y, case_size_z)
 case_width = 3.1
-
-
-def create_device():
-    return CompoundZenObj(
-        pcb=Pcb(),
-        lcd=Lcd(),
-        lcd_light=LcdLight(),
-        lcd_wires=LcdWires(),
-        lcd_mounts=LcdMount(),
-        lcd_lock=LcdLock(),
-        socket=Socket(),
-        socket_lever=SocketLever(),
-        socket_lever_cap=SocketLevelCap(),
-        socket_terminals=SocketTerminals(),
-        button=Button(),
-        button_cap=ButtonCap(),
-        button_mount=ButtonMount(),
-        contact_pads=ContactPads(),
-        quarts=Quartz(),
-        power_terminals=PowerTerminals(),
-        surface_mount=SurfaceMount(),
-    )
-
-
-def create_battery():
-    return Battery()
 
 
 def create_case_bottom(device, battery):
@@ -98,8 +68,8 @@ def create_case_top(device, battery):
 
 
 def main():
-    device = create_device()
-    battery = create_battery()
+    device = Device()
+    battery = Battery()
 
     device = device.transformed(
         move(pcb_margin, pcb_margin, case_size_z + case_width - Pcb.size.z - Socket.size.z)
