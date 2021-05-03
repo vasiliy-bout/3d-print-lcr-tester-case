@@ -24,6 +24,7 @@ class BBox(object):
 
         self.__size = None
         self.__offset = None
+        self.__center_offset = None
 
     @property
     def xmin(self):
@@ -79,6 +80,16 @@ class BBox(object):
         if not self.__offset:
             self.__offset = vector3(self.__xmin, self.__ymin, self.__zmin)
         return self.__offset
+
+    @property
+    def center_offset(self):
+        if not self.__center_offset:
+            self.__center_offset = vector3(
+                (self.__xmax + self.__xmin) / 2.0,
+                (self.__ymax + self.__ymin) / 2.0,
+                (self.__zmax + self.__zmin) / 2.0
+            )
+        return self.__center_offset
 
     def with_border(self, width):
         return BBox(
@@ -167,12 +178,20 @@ class CompoundZenObj(ZenObj):
         return CompoundZenObj(*objects, colour=self.colour, **objects_dict)
 
     def __getitem__(self, item):
+        """
+        :type item: int | str
+        :rtype: ZenObj
+        """
         if isinstance(item, int):
             return self.objects[item]
         else:
             return self.objects_dict[item]
 
     def __getattr__(self, item):
+        """
+        :type item: str
+        :rtype: ZenObj
+        """
         return self.objects_dict[item]
 
 

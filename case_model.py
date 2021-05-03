@@ -2,7 +2,7 @@ from zencad import *
 
 from api import SimpleZenObj, Size
 from config import EPS, EPS2
-from device_model import Pcb, Battery, LcdWires, Device, Socket
+from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap
 
 
 class CaseProperties(object):
@@ -60,6 +60,14 @@ class CaseTop(SimpleZenObj):
         ))
         socket_hole = box(socket_bbox.size).move(socket_bbox.offset)
         case = case - socket_hole - lever_hole
+
+        cap_bbox = device.button_cap.bbox()
+        cap_hole = cylinder(r=ButtonCap.radius + EPS, h=ButtonCap.height).move(vector3(
+            cap_bbox.center_offset.x,
+            cap_bbox.center_offset.y,
+            cap_bbox.zmax - ButtonCap.height
+        ))
+        case = case - cap_hole
 
         super().__init__(case)
 
