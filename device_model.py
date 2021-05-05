@@ -191,7 +191,7 @@ class SocketTerminals(SimpleZenObj):
 
 
 class Button(SimpleZenObj):
-    colour = color.mech
+    colour = color(0.2, 0.2, 0.2)
 
     size = Size(12.0, 12.0, 4.6 - Pcb.size.z)
     offset = vector3(
