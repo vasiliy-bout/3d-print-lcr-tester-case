@@ -37,7 +37,7 @@ class CaseTop(SimpleZenObj):
     colour = color.white
 
     size = Size(CaseProperties.size.x, CaseProperties.size.y, EPS)
-    offset = vector3(0.0, 0.0, CaseProperties.size.z - EPS)
+    offset_z = CaseProperties.size.z - EPS
     bottom_center = (size.x / 2, size.y / 2, 0.0)
 
     def __init__(self, device, battery):
@@ -50,16 +50,16 @@ class CaseTop(SimpleZenObj):
             t=CaseProperties.width,
             refs=[self.bottom_center]
         )
-        case = case.move(self.offset)
+        case = case.moveZ(self.offset_z)
 
         battery_wall = box(size=(
             CaseProperties.battery_wall_width,
             self.size.y + EPS2,
             EPS + EPS
         )).move(vector3(
-            self.offset.x + CaseProperties.battery_wall_offset_x,
-            self.offset.y - EPS,
-            self.offset.z
+            CaseProperties.battery_wall_offset_x,
+            -EPS,
+            self.offset_z
         ))
         case = unify(case + battery_wall)
 
