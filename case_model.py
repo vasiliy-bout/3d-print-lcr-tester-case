@@ -6,12 +6,14 @@ from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdM
 
 
 class CaseProperties(object):
-    pcb_margin = 1.0
-    battery_margin = 0.5
-    socket_margin = 0.3
-    button_margin = 0.3
+    pcb_margin = 1.8
+    battery_margin = 0.4
+    socket_margin = 0.36
+    button_cap_margin = 0.36
+    button_margin = 1.0
     screen_margin = 1.0
-    contact_pads_margin = 3.0
+    contact_pads_margin = 2.2
+    control_frame_margin = 1.0
 
     battery_wall_width = 4
     battery_wall_offset_x = pcb_margin + LcdMount.offset.x + LcdMount.size.x + pcb_margin
@@ -83,6 +85,15 @@ class CaseTop(SimpleZenObj):
         )).move(vector3(-EPS, -EPS, self.offset_z))
         case = case + screen_frame_filler + screen_frame
 
+        controls_frame = box(size=(
+            CaseProperties.battery_wall_offset_x - EPS2,
+            device.lcd.bbox().ymin - CaseProperties.control_frame_margin - EPS,
+            CaseProperties.size.z - device.pcb.bbox().zmax + EPS  # full contact with PCB, no gaps
+        )).move(vector3(
+            EPS, EPS, device.pcb.bbox().zmax
+        ))
+        case = case + controls_frame
+
         case = unify(case)
 
         socket_bbox = device.socket.bbox().with_border(CaseProperties.socket_margin)
@@ -101,7 +112,7 @@ class CaseTop(SimpleZenObj):
 
         cap_bbox = device.button_cap.bbox()  # type: BBox
         cap_hole = cylinder(
-            r=ButtonCap.radius + CaseProperties.button_margin,
+            r=ButtonCap.radius + CaseProperties.button_cap_margin,
             h=ButtonCap.height
         ).move(vector3(
             cap_bbox.center_offset.x,
@@ -109,6 +120,17 @@ class CaseTop(SimpleZenObj):
             cap_bbox.zmax - ButtonCap.height
         ))
         case = case - cap_hole
+
+        button_hole = box(size=(
+            cap_bbox.size.x + CaseProperties.button_margin * 2,
+            cap_bbox.size.y + CaseProperties.button_margin * 2,
+            CaseProperties.size.z - device.pcb.bbox().zmax
+        )).move(vector3(
+            cap_bbox.offset.x - CaseProperties.button_margin,
+            cap_bbox.offset.y - CaseProperties.button_margin,
+            device.pcb.bbox().zmax
+        ))
+        case = case - button_hole
 
         screen_bbox = device.lcd_screen.bbox()  # type: BBox
         screen_hole = box(size=(

@@ -28,8 +28,12 @@ def main():
 
     trans = None
     # trans = SliceShape(device.button_cap)
+    # trans = SliceShape(device.button_cap, normal_vector=(-1, 0, 0))
     # trans = SliceShape(device.lcd_screen)
     # trans = SliceShape(device.lcd_screen, normal_vector=(-1, 0, 0))
+    # trans = SliceShape(device.contact_pads, normal_vector=(-1, 0, 0))
+
+    # trans = trans * SliceShape(device.button_cap, normal_vector=(-1, 1, 0))
 
     all_objects.display(trans=trans)
 

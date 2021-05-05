@@ -10,6 +10,9 @@ class SliceBase(object):
     def __call__(self, shape):
         return shape ^ self.cut
 
+    def __mul__(self, other):
+        return lambda shape: self(other(shape))
+
 
 class SliceShape(SliceBase):
     def __init__(self, shape, normal_vector=(0, 1, 0), trans=None):
