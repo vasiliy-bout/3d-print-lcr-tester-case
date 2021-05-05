@@ -8,6 +8,7 @@ from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdM
 class CaseProperties(object):
     pcb_margin = 0.4
     battery_margin = 0.5
+    screen_margin = 1.0
 
     battery_wall_width = 4
     battery_wall_offset_x = pcb_margin + LcdMount.offset.x + LcdMount.size.x + pcb_margin
@@ -37,7 +38,7 @@ class CaseTop(SimpleZenObj):
     colour = color.white
 
     size = Size(CaseProperties.size.x, CaseProperties.size.y, EPS)
-    offset_z = CaseProperties.size.z - EPS
+    offset_z = CaseProperties.size.z - size.z
     bottom_center = (size.x / 2, size.y / 2, 0.0)
 
     def __init__(self, device, battery):
@@ -61,7 +62,25 @@ class CaseTop(SimpleZenObj):
             -EPS,
             self.offset_z
         ))
-        case = unify(case + battery_wall)
+        case = case + battery_wall
+
+        screen_frame_width = (CaseProperties.size.z -
+                              device.lcd_screen.bbox().zmax - CaseProperties.screen_margin)
+        screen_frame = box(size=(
+            CaseProperties.battery_wall_offset_x - EPS2,
+            self.size.y - EPS2,
+            screen_frame_width + EPS
+        )).move(vector3(
+            EPS, EPS, CaseProperties.size.z - screen_frame_width
+        ))
+        screen_frame_filler = box(size=(
+            CaseProperties.battery_wall_offset_x + EPS2,
+            self.size.y + EPS2,
+            self.size.z + EPS
+        )).move(vector3(-EPS, -EPS, self.offset_z))
+        case = case + screen_frame_filler + screen_frame
+
+        case = unify(case)
 
         socket_bbox = device.socket.bbox().with_border(EPS)
         lever_hole = box(size=(
