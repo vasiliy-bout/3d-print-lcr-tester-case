@@ -31,13 +31,28 @@ class Pcb(SimpleZenObj):
 
 
 class Lcd(SimpleZenObj):
-    colour = color.green
+    colour = color(0.0, 0.4, 0.0)
 
     size = Size(58.6, 38.5, 6.6 - Pcb.size.z)
     offset = vector3(
         6.5,
         Pcb.size.y - size.y,
         Pcb.size.z
+    )
+
+    def __init__(self):
+        lcd = box(size=self.size).move(self.offset)
+        super().__init__(lcd)
+
+
+class LcdScreen(SimpleZenObj):
+    colour = color.green
+
+    size = Size(54.0, 30.0, 0.1)
+    offset = vector3(
+        Lcd.offset.x + (Lcd.size.x - size.x) / 2.0,
+        Lcd.offset.y + 1.0,
+        Lcd.offset.z + Lcd.size.z
     )
 
     def __init__(self):
@@ -314,6 +329,7 @@ class Device(CompoundZenObj):
         super().__init__(
             pcb=Pcb(),
             lcd=Lcd(),
+            lcd_screen=LcdScreen(),
             lcd_light=LcdLight(),
             lcd_wires=LcdWires(),
             lcd_mounts=LcdMount(),
