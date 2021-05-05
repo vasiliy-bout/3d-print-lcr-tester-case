@@ -48,7 +48,7 @@ class Lcd(SimpleZenObj):
 class LcdScreen(SimpleZenObj):
     colour = color.green
 
-    size = Size(54.0, 30.0, 0.1)
+    size = Size(54.0, 30.0, 0.4)
     offset = vector3(
         Lcd.offset.x + (Lcd.size.x - size.x) / 2.0,
         Lcd.offset.y + 1.0,
