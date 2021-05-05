@@ -1,5 +1,7 @@
 from zencad import *
 
+from api import BBox
+
 
 class SliceBase(object):
     def __init__(self, cut):
@@ -9,11 +11,12 @@ class SliceBase(object):
         return shape ^ self.cut
 
 
-class SliceButtonCap(SliceBase):
-    def __init__(self, device):
+class SliceShape(SliceBase):
+    def __init__(self, shape):
         """
-        :type device: Device
+        :type shape: pyservoce.libservoce.Shape
         """
         cut = halfspace().rotateX(deg(90))
-        cut = cut.moveY(device.button_cap.bbox().center_offset.y)
+        bbox = BBox.from_zen_bbox(shape.bbox())
+        cut = cut.moveY(bbox.center_offset.y)
         super().__init__(cut)

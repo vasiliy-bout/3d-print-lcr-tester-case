@@ -14,12 +14,13 @@ def main():
     all_objects = CompoundZenObj(
         device,
         battery,
-        # case_top,
-        # case_bottom,
+        case_top,
+        case_bottom,
     )
 
-    trans = None
-    # trans = SliceButtonCap(device)
+    # trans = None
+    # trans = SliceShape(device.button_cap)
+    trans = SliceShape(device.lcd_screen)
 
     all_objects.display(trans=trans)
 
