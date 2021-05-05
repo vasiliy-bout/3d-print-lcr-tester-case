@@ -131,8 +131,8 @@ class LcdLock(SimpleZenObj):
 
     def __init__(self):
         locks = (
-            cylinder(r=self.radius0, h=self.height0).move(self.offset0) +
-            cylinder(r=self.radius1, h=self.height1).move(self.offset1)
+                cylinder(r=self.radius0, h=self.height0).move(self.offset0) +
+                cylinder(r=self.radius1, h=self.height1).move(self.offset1)
         )
         super().__init__(locks)
 
@@ -289,8 +289,8 @@ class PowerTerminals(SimpleZenObj):
 
     def __init__(self):
         terminals = (
-            box(self.size).move(self.offset) +
-            cylinder(r=self.wires_radius, h=self.wires_height).move(self.wires_offset)
+                box(self.size).move(self.offset) +
+                cylinder(r=self.wires_radius, h=self.wires_height).move(self.wires_offset)
         )
         super().__init__(terminals)
 
