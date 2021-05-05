@@ -11,6 +11,7 @@ class CaseProperties(object):
     socket_margin = 0.3
     button_margin = 0.3
     screen_margin = 1.0
+    contact_pads_margin = 3.0
 
     battery_wall_width = 4
     battery_wall_offset_x = pcb_margin + LcdMount.offset.x + LcdMount.size.x + pcb_margin
@@ -121,6 +122,21 @@ class CaseTop(SimpleZenObj):
         ))
         case = case - screen_hole
 
+        contact_pads_bbox = device.contact_pads.bbox()  # type: BBox
+        contact_pads_bbox = contact_pads_bbox.with_border_x(CaseProperties.contact_pads_margin)
+        contact_pads_bbox = contact_pads_bbox.with_border_y(CaseProperties.contact_pads_margin)
+        contact_pads_bbox = contact_pads_bbox.with_border_z(EPS)
+        contact_pads_hole = box(size=(
+            contact_pads_bbox.size.x,
+            contact_pads_bbox.ymax + CaseProperties.width + EPS,
+            CaseProperties.size.z + CaseProperties.width - contact_pads_bbox.zmin
+        )).move(vector3(
+            contact_pads_bbox.offset.x,
+            -CaseProperties.width - EPS,
+            contact_pads_bbox.zmin
+        ))
+        case = case - contact_pads_hole
+
         super().__init__(case)
 
 
@@ -162,5 +178,20 @@ class CaseBottom(SimpleZenObj):
             CaseProperties.socket_margin
         ))
         case = case - lever_hole
+
+        contact_pads_bbox = device.contact_pads.bbox()  # type: BBox
+        contact_pads_bbox = contact_pads_bbox.with_border_x(CaseProperties.contact_pads_margin)
+        contact_pads_bbox = contact_pads_bbox.with_border_y(CaseProperties.contact_pads_margin)
+        contact_pads_bbox = contact_pads_bbox.with_border_z(EPS)
+        contact_pads_hole = box(size=(
+            contact_pads_bbox.size.x,
+            contact_pads_bbox.ymax + CaseProperties.width + EPS,
+            CaseProperties.size.z + CaseProperties.width - contact_pads_bbox.zmin
+        )).move(vector3(
+            contact_pads_bbox.offset.x,
+            -CaseProperties.width - EPS,
+            contact_pads_bbox.zmin
+        ))
+        case = case - contact_pads_hole
 
         super().__init__(case)

@@ -110,6 +110,35 @@ class BBox(object):
             self.__zmax + width
         )
 
+    def with_border_x(self, width):
+        return BBox(
+            self.__xmin - width,
+            self.__xmax + width,
+            self.__ymin,
+            self.__ymax,
+            self.__zmin,
+            self.__zmax
+        )
+
+    def with_border_y(self, width):
+        return BBox(
+            self.__xmin,
+            self.__xmax,
+            self.__ymin - width,
+            self.__ymax + width,
+            self.__zmin,
+            self.__zmax
+        )
+
+    def with_border_z(self, width):
+        return BBox(
+            self.__xmin,
+            self.__xmax,
+            self.__ymin,
+            self.__ymax,
+            self.__zmin - width,
+            self.__zmax + width
+        )
 
 class ZenObj(object):
     """
