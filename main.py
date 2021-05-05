@@ -11,17 +11,25 @@ def main():
     case_bottom = CaseBottom(device, battery)
     case_top = CaseTop(device, battery)
 
-    all_objects = CompoundZenObj(
+    internals = CompoundZenObj(
         device,
-        battery,
+        battery
+    )
+    case = CompoundZenObj(
         case_top,
         case_bottom,
+        # colour=color(1.0, 1.0, 1.0, 0.7)
     )
 
-    # trans = None
+    all_objects = CompoundZenObj(
+        internals,
+        case,
+    )
+
+    trans = None
     # trans = SliceShape(device.button_cap)
     # trans = SliceShape(device.lcd_screen)
-    trans = SliceShape(device.lcd_screen, normal_vector=(-1, 0, 0))
+    # trans = SliceShape(device.lcd_screen, normal_vector=(-1, 0, 0))
 
     all_objects.display(trans=trans)
 
