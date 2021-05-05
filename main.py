@@ -20,7 +20,8 @@ def main():
 
     # trans = None
     # trans = SliceShape(device.button_cap)
-    trans = SliceShape(device.lcd_screen)
+    # trans = SliceShape(device.lcd_screen)
+    trans = SliceShape(device.lcd_screen, normal_vector=(-1, 0, 0))
 
     all_objects.display(trans=trans)
 
