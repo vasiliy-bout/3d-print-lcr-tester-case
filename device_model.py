@@ -99,18 +99,11 @@ class LcdWires(SimpleZenObj):
 class LcdMount(SimpleZenObj):
     colour = color.mech
 
-    points = points([
-        (0.0, 0.0, 0.0), (0.0, 8.0, 0.0), (6.0, 8.0, 0.0), (6.0, 0.0, 0.0)
-    ])
-    width = 4.5
+    size = Size(6.0, 8.0, 4.5)
     offset = vector3(67.0, 35.0, -2.0)
 
     def __init__(self):
-        mount = extrude(
-            proto=polysegment(self.points, closed=True).fill(),
-            vec=self.width
-        )
-        mount = mount.move(self.offset)
+        mount = box(size=self.size).move(self.offset)
         super().__init__(mount)
 
 

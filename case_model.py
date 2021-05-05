@@ -2,15 +2,19 @@ from zencad import *
 
 from api import SimpleZenObj, Size, BBox
 from config import EPS, EPS2
-from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap
+from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdMount
 
 
 class CaseProperties(object):
     pcb_margin = 0.4
     battery_margin = 0.5
 
+    battery_wall_width = 4
+    battery_wall_offset_x = pcb_margin + LcdMount.offset.x + LcdMount.size.x + pcb_margin
+
     size = Size(
-        pcb_margin + Pcb.size.x + pcb_margin + 4 + battery_margin + Battery.size.x + battery_margin,
+        battery_wall_offset_x + battery_wall_width + battery_margin + Battery.size.x +
+        battery_margin,
         pcb_margin + Pcb.size.y + LcdWires.size.y + pcb_margin,
         EPS + Battery.size.z + battery_margin
     )
@@ -23,7 +27,7 @@ class CaseProperties(object):
     )
 
     battery_offset = vector3(
-        pcb_margin + Pcb.size.x + pcb_margin + 4 + battery_margin,
+        battery_wall_offset_x + battery_wall_width + battery_margin,
         EPS,
         EPS
     )
