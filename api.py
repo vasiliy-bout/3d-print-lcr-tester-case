@@ -67,6 +67,9 @@ class BBox(object):
 
     @property
     def size(self):
+        """
+        :rtype: Size
+        """
         if not self.__size:
             self.__size = Size(
                 self.__xmax - self.__xmin,
@@ -77,12 +80,18 @@ class BBox(object):
 
     @property
     def offset(self):
+        """
+        :rtype: pyservoce.vector3
+        """
         if not self.__offset:
             self.__offset = vector3(self.__xmin, self.__ymin, self.__zmin)
         return self.__offset
 
     @property
     def center_offset(self):
+        """
+        :rtype: pyservoce.vector3
+        """
         if not self.__center_offset:
             self.__center_offset = vector3(
                 (self.__xmax + self.__xmin) / 2.0,
@@ -125,7 +134,8 @@ class ZenObj(object):
         Subclasses override this method to display itself with the provided transformation
         and color. If `colour` is `None`, every object is displayed with it's own color.
 
-        :type trans: None | pyservoce.libservoce.transformation
+        :type trans: None | pyservoce.libservoce.transformation | \
+                     (pyservoce.libservoce.Shape) -> pyservoce.libservoce.Shape
         :type colour: None | Color
         :rtype: None
         """
@@ -140,7 +150,8 @@ class ZenObj(object):
         """
         Subclasses override this method to implement transformations.
 
-        :type trans: pyservoce.libservoce.transformation
+        :type trans: pyservoce.libservoce.transformation | \
+                     (pyservoce.libservoce.Shape) -> pyservoce.libservoce.Shape
         :rtype: ZenObj
         """
         pass
