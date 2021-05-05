@@ -105,6 +105,15 @@ class CaseBottom(SimpleZenObj):
             refs=[self.top_center]
         )
 
+        battery_wall = box(size=(
+            CaseProperties.battery_wall_width,
+            self.size.y + EPS2,
+            self.size.z + EPS
+        )).move(vector3(
+            CaseProperties.battery_wall_offset_x, -EPS, -EPS
+        ))
+        case = unify(case + battery_wall)
+
         socket_bbox = device.socket.bbox().with_border(EPS)
         lever_hole = box(size=(
             CaseProperties.width + EPS2,
