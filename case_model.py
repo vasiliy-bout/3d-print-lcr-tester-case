@@ -6,8 +6,10 @@ from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdM
 
 
 class CaseProperties(object):
-    pcb_margin = 0.4
+    pcb_margin = 1.0
     battery_margin = 0.5
+    socket_margin = 0.3
+    button_margin = 0.3
     screen_margin = 1.0
 
     battery_wall_width = 4
@@ -82,21 +84,25 @@ class CaseTop(SimpleZenObj):
 
         case = unify(case)
 
-        socket_bbox = device.socket.bbox().with_border(EPS)
+        socket_bbox = device.socket.bbox().with_border(CaseProperties.socket_margin)
         lever_hole = box(size=(
-            CaseProperties.width + EPS2,
-            Socket.room_size.y + EPS2,
-            Socket.room_size.z + EPS2
+            CaseProperties.width + CaseProperties.pcb_margin + EPS2,
+            Socket.room_size.y + CaseProperties.socket_margin * 2,
+            Socket.room_size.z + CaseProperties.socket_margin * 2
         )).move(vector3(
             -CaseProperties.width - EPS,
             socket_bbox.offset.y,
-            socket_bbox.offset.z + socket_bbox.size.z - Socket.room_size.z - EPS2
+            socket_bbox.offset.z + socket_bbox.size.z - Socket.room_size.z -
+            CaseProperties.socket_margin
         ))
         socket_hole = box(socket_bbox.size).move(socket_bbox.offset)
         case = case - socket_hole - lever_hole
 
         cap_bbox = device.button_cap.bbox()  # type: BBox
-        cap_hole = cylinder(r=ButtonCap.radius + EPS, h=ButtonCap.height).move(vector3(
+        cap_hole = cylinder(
+            r=ButtonCap.radius + CaseProperties.button_margin,
+            h=ButtonCap.height
+        ).move(vector3(
             cap_bbox.center_offset.x,
             cap_bbox.center_offset.y,
             cap_bbox.zmax - ButtonCap.height
@@ -144,15 +150,16 @@ class CaseBottom(SimpleZenObj):
         ))
         case = unify(case + battery_wall)
 
-        socket_bbox = device.socket.bbox().with_border(EPS)
+        socket_bbox = device.socket.bbox().with_border(CaseProperties.socket_margin)
         lever_hole = box(size=(
             CaseProperties.width + EPS2,
-            Socket.room_size.y + EPS2,
-            Socket.room_size.z + EPS2
+            Socket.room_size.y + CaseProperties.socket_margin * 2,
+            Socket.room_size.z + CaseProperties.socket_margin * 2
         )).move(vector3(
             -CaseProperties.width - EPS,
             socket_bbox.offset.y,
-            socket_bbox.offset.z + socket_bbox.size.z - Socket.room_size.z - EPS2
+            socket_bbox.offset.z + socket_bbox.size.z - Socket.room_size.z -
+            CaseProperties.socket_margin
         ))
         case = case - lever_hole
 
