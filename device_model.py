@@ -13,12 +13,11 @@ class Pcb(SimpleZenObj):
     size = Size(72.5, 60.1, 1.3)
 
     hole_r = 3.5 / 2.0
-    hole_vectors = vectors([
-        (hole_r + 1.1, size.y - hole_r - 1.5, 0.0),
-        (hole_r + 1.1, size.y - hole_r - 39.0, 0.0),
-        (size.x - hole_r - 1.1, size.y - hole_r - 1.5, 0.0),
-        (size.x - hole_r - 1.1, size.y - hole_r - 39.0, 0.0),
-    ])
+    hole_vector_nw = vector3(hole_r + 1.1, size.y - hole_r - 1.5, 0.0)
+    hole_vector_sw = vector3(hole_r + 1.1, size.y - hole_r - 39.0, 0.0)
+    hole_vector_ne = vector3(size.x - hole_r - 1.1, size.y - hole_r - 1.5, 0.0)
+    hole_vector_se = vector3(size.x - hole_r - 1.1, size.y - hole_r - 39.0, 0.0)
+    hole_vectors = [hole_vector_nw, hole_vector_sw, hole_vector_ne, hole_vector_se]
 
     def __init__(self):
         pcb = box(size=self.size)
@@ -345,3 +344,35 @@ class Device(CompoundZenObj):
             power_terminals=PowerTerminals(),
             surface_mount=SurfaceMount()
         )
+
+
+class Screw(SimpleZenObj):
+    colour = color.mech
+
+    radius = 1.1
+    length = 8.0
+    cap_r = 2.0
+    cap_h = 2.0
+
+    def __init__(self):
+        shape = (cylinder(r=self.radius, h=self.length) +
+                 cylinder(r=self.cap_r, h=self.cap_h).moveZ(self.length))
+        shape = shape.rotateX(deg(180))
+        shape = shape.moveZ(self.length)
+        super().__init__(shape)
+
+
+class ScrewBlack(SimpleZenObj):
+    colour = color(0.2, 0.2, 0.2)
+
+    radius = 1.0
+    length = 7.8
+    cap_r = 2.2
+    cap_h = 1.8
+
+    def __init__(self):
+        shape = (cylinder(r=self.radius, h=self.length) +
+                 cylinder(r=self.cap_r, h=self.cap_h).moveZ(self.length))
+        shape = shape.rotateX(deg(180))
+        shape = shape.moveZ(self.length)
+        super().__init__(shape)

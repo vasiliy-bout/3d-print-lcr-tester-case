@@ -26,3 +26,16 @@ class SliceShape(SliceBase):
         if trans is not None:
             cut = trans(cut)
         super().__init__(cut)
+
+
+class SlicePoint(SliceBase):
+    def __init__(self, center, normal_vector=(0, 1, 0), trans=None):
+        """
+        :type center: pyservoce.libservoce.vector3
+        """
+        rotate_trans = short_rotate((0, 0, -1), normal_vector)
+        cut = rotate_trans(halfspace())
+        cut = cut.move(center)
+        if trans is not None:
+            cut = trans(cut)
+        super().__init__(cut)
