@@ -302,6 +302,17 @@ class CaseBottom(SimpleZenObj):
         ))
         case = case - contact_pads_hole
 
+        contact_pads_hole = box(size=(
+            contact_pads_bbox.size.x,
+            contact_pads_bbox.size.y - CaseProperties.pcb_margin - CaseProperties.default_margin,
+            CaseProperties.smd_margin
+        )).move(vector3(
+            contact_pads_bbox.offset.x,
+            contact_pads_bbox.offset.y + CaseProperties.pcb_margin + CaseProperties.default_margin,
+            device.pcb.bbox().zmin - CaseProperties.smd_margin
+        ))
+        case = case - contact_pads_hole
+
         power_terminals_bbox = device.power_terminals.bbox()  # type: BBox
         surface_mount_bbox = device.surface_mount.bbox()  # type: BBox
         lcd_mount_bbox = device.lcd_mount.bbox()  # type: BBox

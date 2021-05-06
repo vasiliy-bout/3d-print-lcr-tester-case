@@ -33,7 +33,10 @@ class SlicePoint(SliceBase):
         """
         :type center: pyservoce.libservoce.vector3
         """
-        rotate_trans = short_rotate((0, 0, -1), normal_vector)
+        if normal_vector == (0, 0, 1):
+            rotate_trans = rotateX(deg(180))
+        else:
+            rotate_trans = short_rotate((0, 0, -1), normal_vector)
         cut = rotate_trans(halfspace())
         cut = cut.move(center)
         if trans is not None:
