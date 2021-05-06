@@ -57,6 +57,8 @@ class CaseProperties(object):
         screw_black_mount_width + EPS,
         EPS
     )
+    battery_frame_height = 1.5
+    battery_frame_width = 1.5
 
 
 class CaseTop(SimpleZenObj):
@@ -114,6 +116,25 @@ class CaseTop(SimpleZenObj):
             EPS, EPS, device.pcb.bbox().zmax
         ))
         case = case + controls_frame
+
+        battery_frame = box(size=(
+            CaseProperties.size.x - CaseProperties.battery_wall_offset_x -
+            CaseProperties.battery_wall_width - EPS2,
+            CaseProperties.size.y - EPS2,
+            CaseProperties.battery_frame_height + EPS
+        )) - box(size=(
+            CaseProperties.size.x - CaseProperties.battery_wall_offset_x -
+            CaseProperties.battery_wall_width,
+            CaseProperties.size.y - EPS2 - CaseProperties.battery_frame_width * 2,
+            CaseProperties.battery_frame_height + EPS2
+        )).move(vector3(-EPS, CaseProperties.battery_frame_width, -EPS))
+
+        battery_frame = battery_frame.move(vector3(
+            CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width + EPS,
+            EPS,
+            CaseProperties.size.z - CaseProperties.battery_frame_height
+        ))
+        case = case + battery_frame
 
         for info in chain(
                 PcbScrews.screw_info_dict.values(),
