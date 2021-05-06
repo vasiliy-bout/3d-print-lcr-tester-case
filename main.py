@@ -4,8 +4,35 @@ from case_model import CaseProperties, CaseBottom, CaseTop, CaseScrews
 from device_model import Battery, Device
 from slices_model import *
 
+import argparse
+
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--top')
+    parser.add_argument('--bottom')
+    parser.add_argument('--delta', type=float, default=0.02)
+    args = parser.parse_args()
+
+    run(args.top, args.bottom, args.delta)
+
+
+def run(top_file, bottom_file, delta):
+    all_objects = create_model()
+
+    if not (top_file or bottom_file):
+        all_objects.display()
+        show(standalone=True)
+    else:
+        if top_file:
+            print(f'Writing "top" model to {top_file}...')
+            to_stl(all_objects.case.top.shape, top_file, delta)
+        if bottom_file:
+            print(f'Writing "bottom" model to {bottom_file}...')
+            to_stl(all_objects.case.bottom.shape, bottom_file, delta)
+
+
+def create_model():
     device = Device().transformed(move(CaseProperties.pcb_offset))
     battery = Battery().transformed(move(CaseProperties.battery_offset))
     case_bottom = CaseBottom(device, battery)
@@ -18,18 +45,16 @@ def main():
         case_screws,
     )
     case = CompoundZenObj(
-        case_top,
-        case_bottom,
+        top=case_top,
+        bottom=case_bottom,
     )
 
     all_objects = CompoundZenObj(
         internals,
-        case,
+        case=case,
     )
 
-    all_objects.display()
-
-    show(standalone=True)
+    return all_objects
 
 
 if __name__ == '__main__':
