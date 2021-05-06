@@ -373,7 +373,7 @@ class CaseBottom(SimpleZenObj):
         battery_wires_channel = box(size=(
             (CaseProperties.battery_offset.x - power_terminals_bbox.xmin) / cos(deg(-15)),
             PowerTerminals.wires_radius * 2 + CaseProperties.default_margin * 2,
-            device.pcb.bbox().zmin
+            CaseProperties.size.z + EPS2
         )).moveY(
             -PowerTerminals.wires_radius - CaseProperties.default_margin
         ).rotateZ(
