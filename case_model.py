@@ -2,7 +2,9 @@ from zencad import *
 
 from api import SimpleZenObj, Size, BBox
 from config import EPS, EPS2
-from device_model import Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdMount
+from device_model import (
+    Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdMount, LcdLock1, LcdLock2
+)
 
 
 class CaseProperties(object):
@@ -186,7 +188,18 @@ class CaseBottom(SimpleZenObj):
         )).move(vector3(
             CaseProperties.battery_wall_offset_x, -EPS, -EPS
         ))
-        case = unify(case + battery_wall)
+        case = case + battery_wall
+
+        pcb_bed = box(size=(
+            CaseProperties.battery_wall_offset_x + EPS2,
+            self.size.y + EPS2,
+            device.pcb.bbox().zmin + EPS  # full contact with PCB, no gaps
+        )).move(vector3(
+            -EPS, -EPS, -EPS
+        ))
+        case = case + pcb_bed
+
+        case = unify(case)
 
         socket_bbox = device.socket.bbox().with_border(CaseProperties.socket_margin)
         lever_hole = box(size=(
@@ -215,5 +228,19 @@ class CaseBottom(SimpleZenObj):
             contact_pads_bbox.zmin
         ))
         case = case - contact_pads_hole
+
+        case = case - device.power_terminals.bbox().with_border(1.0).to_zen_box()
+        case = case - device.surface_mount.bbox().with_border(1.0).to_zen_box()
+        case = case - device.quarts.bbox().with_border(1.0).to_zen_box()
+        case = case - device.lcd_mount.bbox().with_border(1.0).to_zen_box()
+        case = case - device.socket_terminals.bbox().with_border(1.0).to_zen_box()
+        case = case - device.button_mount.bbox().with_border(1.0).to_zen_box()
+
+        lock_bbox = device.lcd_lock1.bbox()  # type: BBox
+        case = case - (cylinder(r=LcdLock1.radius + 1.0, h=LcdLock1.height + 2 * 1.0, center=True)
+                       .move(lock_bbox.center_offset))
+        lock_bbox = device.lcd_lock2.bbox()  # type: BBox
+        case = case - (cylinder(r=LcdLock2.radius + 1.0, h=LcdLock2.height + 2 * 1.0, center=True)
+                       .move(lock_bbox.center_offset))
 
         super().__init__(case)

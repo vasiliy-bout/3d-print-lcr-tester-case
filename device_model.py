@@ -107,27 +107,32 @@ class LcdMount(SimpleZenObj):
         super().__init__(mount)
 
 
-class LcdLock(SimpleZenObj):
+class LcdLock1(SimpleZenObj):
     colour = color.mech
 
-    radius0 = 2.5
-    height0 = 3.0
-    offset0 = vector3(
-        63.0 + radius0,
-        24.0 + radius0,
-        -height0
+    radius = 2.5
+    height = 3.0
+    offset = vector3(
+        63.0 + radius,
+        24.0 + radius,
+        -height
     )
 
-    radius1 = 3.0
-    height1 = 1.0
-    offset1 = vector3(8.0, 51.0, -height1)
+    def __init__(self):
+        lock = cylinder(r=self.radius, h=self.height).move(self.offset)
+        super().__init__(lock)
+
+
+class LcdLock2(SimpleZenObj):
+    colour = color.mech
+
+    radius = 3.0
+    height = 1.0
+    offset = vector3(8.0, 51.0, -height)
 
     def __init__(self):
-        locks = (
-                cylinder(r=self.radius0, h=self.height0).move(self.offset0) +
-                cylinder(r=self.radius1, h=self.height1).move(self.offset1)
-        )
-        super().__init__(locks)
+        lock = cylinder(r=self.radius, h=self.height).move(self.offset)
+        super().__init__(lock)
 
 
 class Socket(SimpleZenObj):
@@ -292,7 +297,7 @@ class SurfaceMount(SimpleZenObj):
     colour = color.mech
 
     points = points([
-        (8.0, 19.0, 0.0), (8.0, 38.0, 0.0), (22.0, 38.0, 0.0),
+        (9.5, 19.0, 0.0), (9.5, 38.0, 0.0), (22.0, 38.0, 0.0),
         (27.0, 51.0, 0.0), (43.0, 51.0, 0.0), (55.0, 42.0, 0.0),
         (55.0, 25.0, 0.0), (46.0, 19.0, 0.0)
     ])
@@ -325,8 +330,9 @@ class Device(CompoundZenObj):
             lcd_screen=LcdScreen(),
             lcd_light=LcdLight(),
             lcd_wires=LcdWires(),
-            lcd_mounts=LcdMount(),
-            lcd_lock=LcdLock(),
+            lcd_mount=LcdMount(),
+            lcd_lock1=LcdLock1(),
+            lcd_lock2=LcdLock2(),
             socket=Socket(),
             socket_lever=SocketLever(),
             socket_lever_cap=SocketLevelCap(),

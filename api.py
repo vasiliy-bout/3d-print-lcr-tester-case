@@ -58,6 +58,17 @@ class BBox(object):
         """
         return BBox(bbox.xmin, bbox.xmax, bbox.ymin, bbox.ymax, bbox.zmin, bbox.zmax)
 
+    @staticmethod
+    def from_zen_shape(shape):
+        """
+        :type shape: pyservoce.libservoce.Shape
+        :rtype: BBox
+        """
+        return BBox.from_zen_bbox(shape.bbox())
+
+    def to_zen_box(self):
+        return box(size=self.size).move(self.offset)
+
     def __add__(self, other):
         return BBox(
             min(self.__xmin, other.xmin), max(self.__xmax, other.xmax),
@@ -139,6 +150,7 @@ class BBox(object):
             self.__zmin - width,
             self.__zmax + width
         )
+
 
 class ZenObj(object):
     """

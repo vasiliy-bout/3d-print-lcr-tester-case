@@ -35,6 +35,9 @@ def main():
 
     # trans = trans * SliceShape(device.button_cap, normal_vector=(-1, 1, 0))
 
+    # trans = SliceShape(device.lcd_lock2, normal_vector=(0, 0, -1))
+    # trans = trans * SliceShape(device.lcd_lock1, normal_vector=(0, 1, 0))
+
     all_objects.display(trans=trans)
 
     show(standalone=True)
