@@ -8,14 +8,14 @@ from device_model import (
 
 
 class CaseProperties(object):
+    default_margin = 1.0
+
     pcb_margin = 1.8
     battery_margin = 0.4
     socket_margin = 0.36
     button_cap_margin = 0.36
-    button_margin = 1.0
     screen_margin = 1.0
     contact_pads_margin = 2.2
-    control_frame_margin = 1.0
 
     battery_wall_width = 4
     battery_wall_offset_x = pcb_margin + LcdMount.offset.x + LcdMount.size.x + pcb_margin
@@ -89,8 +89,9 @@ class CaseTop(SimpleZenObj):
 
         controls_frame = box(size=(
             CaseProperties.battery_wall_offset_x - EPS2,
-            device.lcd.bbox().ymin - CaseProperties.control_frame_margin - EPS,
-            CaseProperties.size.z - device.pcb.bbox().zmax + EPS  # full contact with PCB, no gaps
+            device.lcd.bbox().ymin - CaseProperties.default_margin - EPS,
+            # full contact with PCB, no gaps
+            CaseProperties.size.z - device.pcb.bbox().zmax + EPS
         )).move(vector3(
             EPS, EPS, device.pcb.bbox().zmax
         ))
@@ -124,12 +125,12 @@ class CaseTop(SimpleZenObj):
         case = case - cap_hole
 
         button_hole = box(size=(
-            cap_bbox.size.x + CaseProperties.button_margin * 2,
-            cap_bbox.size.y + CaseProperties.button_margin * 2,
+            cap_bbox.size.x + CaseProperties.default_margin * 2,
+            cap_bbox.size.y + CaseProperties.default_margin * 2,
             CaseProperties.size.z - device.pcb.bbox().zmax
         )).move(vector3(
-            cap_bbox.offset.x - CaseProperties.button_margin,
-            cap_bbox.offset.y - CaseProperties.button_margin,
+            cap_bbox.offset.x - CaseProperties.default_margin,
+            cap_bbox.offset.y - CaseProperties.default_margin,
             device.pcb.bbox().zmax
         ))
         case = case - button_hole
