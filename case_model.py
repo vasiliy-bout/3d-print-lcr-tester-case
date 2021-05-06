@@ -250,6 +250,21 @@ class CaseTop(SimpleZenObj):
              socket_bbox.zmax),
         ]))
 
+        case = fillet(case, r=1.0, refs=points([
+            (0, 0, CaseProperties.size.z - 0.5),
+            (0, CaseProperties.size.y, CaseProperties.size.z - 0.5),
+            (CaseProperties.battery_wall_offset_x,
+             0, CaseProperties.size.z - 0.5),
+            (CaseProperties.battery_wall_offset_x,
+             CaseProperties.size.y, CaseProperties.size.z - 0.5),
+            (CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width,
+             0, CaseProperties.size.z - 0.5),
+            (CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width,
+             CaseProperties.size.y, CaseProperties.size.z - 0.5),
+            (CaseProperties.size.x, 0, CaseProperties.size.z - 0.5),
+            (CaseProperties.size.x, CaseProperties.size.y, CaseProperties.size.z - 0.5),
+        ]))
+
         super().__init__(case)
 
 
@@ -470,6 +485,21 @@ class CaseBottom(SimpleZenObj):
                 -CaseProperties.width - 1
             )
             for info in CaseScrews.screw_info_dict.values()
+        ]))
+
+        case = fillet(case, r=1.4, refs=points([
+            (CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width, 0, 5),
+            (CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width, 7, 5),
+            (CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width, 10, 5),
+            (CaseProperties.battery_wall_offset_x + CaseProperties.battery_wall_width,
+             CaseProperties.size.y, 5),
+            (CaseProperties.size.x, CaseProperties.size.y, 5),
+            (CaseProperties.size.x - CaseProperties.screw_black_mount_width,
+             CaseProperties.screw_black_mount_width, 5),
+            (CaseProperties.size.x - CaseProperties.screw_black_mount_width / 2,
+             CaseProperties.screw_black_mount_width, device.pcb.bbox().zmax),
+            (CaseProperties.size.x - CaseProperties.screw_black_mount_width,
+             CaseProperties.screw_black_mount_width / 2, device.pcb.bbox().zmax),
         ]))
 
         super().__init__(case)
