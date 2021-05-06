@@ -23,6 +23,8 @@ class CaseProperties(object):
     screw_length_margin = 1.0
     screw_radius_margin = 0.2
 
+    smd_margin = 3.0
+
     screw_mount_width = 2.0
     case_mount_width = 2.0
 
@@ -279,11 +281,46 @@ class CaseBottom(SimpleZenObj):
         ))
         case = case - contact_pads_hole
 
+        power_terminals_bbox = device.power_terminals.bbox()  # type: BBox
+        surface_mount_bbox = device.surface_mount.bbox()  # type: BBox
+        lcd_mount_bbox = device.lcd_mount.bbox()  # type: BBox
+        smd_hole_points = points([
+            (power_terminals_bbox.xmin - CaseProperties.default_margin,
+             power_terminals_bbox.ymax + CaseProperties.default_margin,
+             0),
+            (surface_mount_bbox.xmin - CaseProperties.default_margin,
+             surface_mount_bbox.ymax + CaseProperties.default_margin,
+             0),
+            (surface_mount_bbox.xmax + CaseProperties.default_margin,
+             surface_mount_bbox.ymax + CaseProperties.default_margin,
+             0),
+            (lcd_mount_bbox.xmax + CaseProperties.default_margin,
+             lcd_mount_bbox.ymax + CaseProperties.default_margin,
+             0),
+            (lcd_mount_bbox.xmax + CaseProperties.default_margin,
+             lcd_mount_bbox.ymin - CaseProperties.default_margin,
+             0),
+            (surface_mount_bbox.xmax + CaseProperties.default_margin,
+             surface_mount_bbox.ymin - CaseProperties.default_margin,
+             0),
+            (surface_mount_bbox.xmin - CaseProperties.default_margin,
+             surface_mount_bbox.ymin - CaseProperties.default_margin,
+             0),
+            (surface_mount_bbox.xmin - CaseProperties.default_margin,
+             power_terminals_bbox.ymin - CaseProperties.default_margin,
+             0),
+            (power_terminals_bbox.xmin - CaseProperties.default_margin,
+             power_terminals_bbox.ymin - CaseProperties.default_margin,
+             0)
+        ])
+        smd_hole = extrude(
+            proto=polysegment(smd_hole_points, closed=True).fill(),
+            vec=CaseProperties.smd_margin
+        ).moveZ(device.pcb.bbox().zmin - CaseProperties.smd_margin)
+        case = case - smd_hole
+
         for obj in [
-            device.power_terminals,
-            device.surface_mount,
             device.quarts,
-            device.lcd_mount,
             device.socket_terminals,
             device.button_mount,
         ]:
