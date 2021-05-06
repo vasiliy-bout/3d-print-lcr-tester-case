@@ -48,7 +48,7 @@ class CaseProperties(object):
 
     screw_black_mount_rounding_width = 1.0
     screw_black_mount_width = (ScrewBlack.cap_r * 2 + screw_cap_margin * 4 + case_mount_width +
-                               screw_black_mount_rounding_width)
+                               screw_black_mount_rounding_width * 2)
     screw_black_offset = vector3(
         size.x - screw_cap_margin * 2 - ScrewBlack.cap_r - screw_black_mount_rounding_width,
         screw_cap_margin * 2 + ScrewBlack.cap_r + screw_black_mount_rounding_width,
