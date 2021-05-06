@@ -223,6 +223,33 @@ class CaseTop(SimpleZenObj):
         ))
         case = case - contact_pads_hole
 
+        lcd_screen_bbox = device.lcd_screen.bbox()  # type: BBox
+        case = fillet(case, r=CaseProperties.width / 2, refs=points([
+            (contact_pads_bbox.center_offset.x, contact_pads_bbox.ymax,
+             CaseProperties.size.z + CaseProperties.width),
+            (contact_pads_bbox.xmin, 1, CaseProperties.size.z + CaseProperties.width),
+            (contact_pads_bbox.xmax, 1, CaseProperties.size.z + CaseProperties.width),
+            (cap_bbox.center_offset.x, cap_bbox.center_offset.y, cap_bbox.zmax),
+            (lcd_screen_bbox.xmin, lcd_screen_bbox.center_offset.y,
+             CaseProperties.size.z + CaseProperties.width),
+            (lcd_screen_bbox.xmax, lcd_screen_bbox.center_offset.y,
+             CaseProperties.size.z + CaseProperties.width),
+            (lcd_screen_bbox.center_offset.x, lcd_screen_bbox.ymin,
+             CaseProperties.size.z + CaseProperties.width),
+            (lcd_screen_bbox.center_offset.x, lcd_screen_bbox.ymax,
+             CaseProperties.size.z + CaseProperties.width),
+        ]))
+
+        socket_bbox = device.socket.bbox()  # type: BBox
+        case = fillet(case, r=1.4, refs=points([
+            (socket_bbox.xmin, socket_bbox.center_offset.y, socket_bbox.zmax),
+            (socket_bbox.xmax, socket_bbox.center_offset.y, socket_bbox.zmax),
+            (socket_bbox.center_offset.x, socket_bbox.ymin, socket_bbox.zmax),
+            (socket_bbox.center_offset.x, socket_bbox.ymax, socket_bbox.zmax),
+            (0.01, socket_bbox.ymin + Socket.room_size.y + CaseProperties.socket_margin,
+             socket_bbox.zmax),
+        ]))
+
         super().__init__(case)
 
 
@@ -416,6 +443,24 @@ class CaseBottom(SimpleZenObj):
             0.0
         ))
         case = case - battery_wires_channel
+
+        case = fillet(case, r=CaseProperties.width / 2, refs=points([
+            (contact_pads_bbox.center_offset.x, -CaseProperties.width, contact_pads_bbox.zmin),
+            (contact_pads_bbox.xmin, -CaseProperties.width, contact_pads_bbox.zmin + 1),
+            (contact_pads_bbox.xmax, -CaseProperties.width, contact_pads_bbox.zmin + 1),
+        ]))
+
+        socket_bbox = device.socket.bbox()  # type: BBox
+        case = fillet(case, r=1.4, refs=points([
+            (-CaseProperties.width, socket_bbox.ymin, CaseProperties.size.z - 1),
+            (-CaseProperties.width,
+             socket_bbox.ymin + Socket.room_size.y + CaseProperties.socket_margin,
+             CaseProperties.size.z - 1),
+            (-CaseProperties.width,
+             socket_bbox.ymin + (Socket.room_size.y + CaseProperties.socket_margin) / 2.0,
+             CaseProperties.size.z + CaseProperties.width - Socket.room_size.z),
+        ]))
+
 
         super().__init__(case)
 
