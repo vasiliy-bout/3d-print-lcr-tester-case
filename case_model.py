@@ -1,4 +1,5 @@
 from itertools import chain
+from math import cos
 
 from zencad import *
 
@@ -6,7 +7,7 @@ from api import SimpleZenObj, Size, BBox, CompoundZenObj
 from config import EPS, EPS2
 from device_model import (
     Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdMount, LcdLock1, LcdLock2, ScrewBase,
-    ScrewSilver, ScrewBlack
+    ScrewSilver, ScrewBlack, PowerTerminals
 )
 
 
@@ -308,7 +309,7 @@ class CaseBottom(SimpleZenObj):
         for info in CaseScrews.screw_info_dict.values():
             screw_hole_h = info.screw_offset.z + CaseProperties.width + EPS
             screw_hole = cone(
-                r1=info.screw_class.cap_r + CaseProperties.default_margin * 2,
+                r1=info.screw_class.cap_r + CaseProperties.default_margin * 1.8,
                 r2=info.screw_class.cap_r + CaseProperties.default_margin,
                 h=screw_hole_h
             ).move(info.screw_offset).moveZ(-screw_hole_h)
@@ -319,6 +320,33 @@ class CaseBottom(SimpleZenObj):
                 h=CaseProperties.case_mount_width + EPS2
             ).move(info.screw_offset).moveZ(-EPS)
             case = case - screw_hole
+
+        power_terminals_bbox = device.power_terminals.bbox()  # type: BBox
+        power_terminals_bbox = power_terminals_bbox.with_border(CaseProperties.default_margin)
+        battery_wires_hole = cylinder(
+            r=PowerTerminals.wires_radius + CaseProperties.default_margin,
+            h=device.pcb.bbox().zmin
+        ).move(vector3(
+            CaseProperties.pcb_offset.x + PowerTerminals.wires_offset.x,
+            CaseProperties.pcb_offset.y + PowerTerminals.wires_offset.y,
+            0.0
+        ))
+        case = case - battery_wires_hole
+
+        battery_wires_channel = box(size=(
+            (CaseProperties.battery_offset.x - power_terminals_bbox.xmin) / cos(deg(-15)),
+            PowerTerminals.wires_radius * 2 + CaseProperties.default_margin * 2,
+            device.pcb.bbox().zmin
+        )).moveY(
+            -PowerTerminals.wires_radius - CaseProperties.default_margin
+        ).rotateZ(
+            deg(-15)
+        ).move(vector3(
+            CaseProperties.pcb_offset.x + PowerTerminals.wires_offset.x,
+            CaseProperties.pcb_offset.y + PowerTerminals.wires_offset.y,
+            0.0
+        ))
+        case = case - battery_wires_channel
 
         super().__init__(case)
 
