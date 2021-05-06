@@ -464,6 +464,14 @@ class CaseBottom(SimpleZenObj):
              CaseProperties.size.z + CaseProperties.width - Socket.room_size.z),
         ]))
 
+        case = fillet(case, r=1.0, refs=points([
+            (
+                info.screw_offset.x, info.screw_offset.y,
+                -CaseProperties.width - 1
+            )
+            for info in CaseScrews.screw_info_dict.values()
+        ]))
+
         super().__init__(case)
 
 
