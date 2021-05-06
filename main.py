@@ -41,7 +41,9 @@ def main():
     # trans = trans * SliceShape(device.lcd_lock1, normal_vector=(0, 1, 0))
 
     trans = SlicePoint(Pcb.hole_vector_nw + CaseProperties.pcb_offset)
-    # trans = SlicePoint(Pcb.hole_vector_sw + CaseProperties.pcb_offset)
+    # trans = SlicePoint(Pcb.hole_vector_nw + CaseProperties.pcb_offset, normal_vector=(-1, 0, 0))
+    # trans = SlicePoint(Pcb.hole_vector_se + CaseProperties.pcb_offset)
+    # trans = SlicePoint(Pcb.hole_vector_se + CaseProperties.pcb_offset, normal_vector=(-1, 0, 0))
 
     all_objects.display(trans=trans)
 

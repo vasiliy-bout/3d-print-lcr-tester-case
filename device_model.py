@@ -346,33 +346,31 @@ class Device(CompoundZenObj):
         )
 
 
-class Screw(SimpleZenObj):
-    colour = color.mech
+class ScrewBase(SimpleZenObj):
+    radius = None  # type: float
+    length = None  # type: float
+    cap_r = None  # type: float
+    cap_h = None  # type: float
 
+    def __init__(self):
+        shape = (cylinder(r=self.radius, h=self.length) +
+                 cylinder(r=self.cap_r, h=self.cap_h).moveZ(self.length))
+        shape = shape.rotateX(deg(180))
+        shape = shape.moveZ(self.length)
+        super().__init__(shape)
+
+
+class ScrewSilver(ScrewBase):
+    colour = color.mech
     radius = 1.1
     length = 8.0
     cap_r = 2.0
     cap_h = 2.0
 
-    def __init__(self):
-        shape = (cylinder(r=self.radius, h=self.length) +
-                 cylinder(r=self.cap_r, h=self.cap_h).moveZ(self.length))
-        shape = shape.rotateX(deg(180))
-        shape = shape.moveZ(self.length)
-        super().__init__(shape)
 
-
-class ScrewBlack(SimpleZenObj):
+class ScrewBlack(ScrewBase):
     colour = color(0.2, 0.2, 0.2)
-
     radius = 1.0
     length = 7.8
     cap_r = 2.2
     cap_h = 1.8
-
-    def __init__(self):
-        shape = (cylinder(r=self.radius, h=self.length) +
-                 cylinder(r=self.cap_r, h=self.cap_h).moveZ(self.length))
-        shape = shape.rotateX(deg(180))
-        shape = shape.moveZ(self.length)
-        super().__init__(shape)

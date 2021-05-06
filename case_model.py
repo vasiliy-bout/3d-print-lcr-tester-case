@@ -3,8 +3,8 @@ from zencad import *
 from api import SimpleZenObj, Size, BBox, CompoundZenObj
 from config import EPS, EPS2
 from device_model import (
-    Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdMount, LcdLock1, LcdLock2, Screw,
-    ScrewBlack
+    Pcb, Battery, LcdWires, Device, Socket, ButtonCap, LcdMount, LcdLock1, LcdLock2, ScrewBase,
+    ScrewSilver, ScrewBlack
 )
 
 
@@ -108,19 +108,19 @@ class CaseTop(SimpleZenObj):
         ))
         case = case + controls_frame
 
-        for v in PcbScrews.vectors_dict.values():
+        for info in PcbScrews.screw_info_dict.values():
             screw_mount_offset = vector3(
-                v.x, v.y,
+                info.screw_offset.x, info.screw_offset.y,
                 device.pcb.bbox().zmax
             )
             screw_mount = cylinder(
-                r=Screw.radius + CaseProperties.screw_mount_width,
+                r=info.screw_class.radius + CaseProperties.screw_mount_width,
                 # full contact with PCB, no gaps
                 h=CaseProperties.size.z - device.pcb.bbox().zmax + EPS
             ).move(screw_mount_offset)
             screw_hole = cylinder(
-                r=Screw.radius,
-                h=Screw.length - Pcb.size.z + CaseProperties.screw_length_margin
+                r=info.screw_class.radius,
+                h=info.screw_class.length - Pcb.size.z + CaseProperties.screw_length_margin
             ).move(screw_mount_offset)
             case = case + screw_mount - screw_hole
 
@@ -271,45 +271,59 @@ class CaseBottom(SimpleZenObj):
         case = case - (cylinder(r=LcdLock2.radius + 1.0, h=LcdLock2.height + 2 * 1.0, center=True)
                        .move(lock_bbox.center_offset))
 
-        for v in PcbScrews.vectors_dict.values():
-            screw_hole_h = Screw.cap_h + CaseProperties.default_margin
+        for info in PcbScrews.screw_info_dict.values():
+            screw_hole_h = info.screw_class.cap_h + CaseProperties.default_margin
             screw_hole = cylinder(
-                r=Screw.cap_r + CaseProperties.default_margin,
+                r=info.screw_class.cap_r + CaseProperties.default_margin,
                 h=screw_hole_h
-            ).move(v).moveZ(-screw_hole_h)
+            ).move(info.screw_offset).moveZ(-screw_hole_h)
             case = case - screw_hole
 
         super().__init__(case)
 
 
+class ScrewInfo(object):
+    def __init__(self, screw_class, screw_offset):
+        """
+        :type screw_class: type[ScrewBase]
+        :type screw_offset: pyservoce.libservoce.vector3
+        """
+        self.screw_class = screw_class
+        self.screw_offset = screw_offset
+
+
 class PcbScrews(CompoundZenObj):
-    vectors_dict = {
-        'screw_nw': CaseProperties.pcb_offset + Pcb.hole_vector_nw,
-        'screw_se': CaseProperties.pcb_offset + Pcb.hole_vector_se,
-    }
+    screw_info_dict = {
+        'screw_nw': ScrewInfo(ScrewSilver, CaseProperties.pcb_offset + Pcb.hole_vector_nw),
+        'screw_se': ScrewInfo(ScrewSilver, CaseProperties.pcb_offset + Pcb.hole_vector_se),
+    }  # type: dict[str, ScrewInfo]
 
     def __init__(self):
         screw_dict = {
-            k: Screw().transformed(move(v))
-            for k, v in self.vectors_dict.items()
+            k: info.screw_class().transformed(move(info.screw_offset))
+            for k, info in self.screw_info_dict.items()
         }
         super().__init__(**screw_dict)
 
 
 class CaseScrews(CompoundZenObj):
-    vectors_dict = {
-        'screw_ne': (CaseProperties.pcb_offset + vector3(0, 0, -CaseProperties.case_mount_width) +
-                     Pcb.hole_vector_ne),
-        'screw_sw': (CaseProperties.pcb_offset + vector3(0, 0, -CaseProperties.case_mount_width) +
-                     Pcb.hole_vector_sw),
-        'screw_black': (CaseProperties.pcb_offset +
-                        vector3(0, 0, -CaseProperties.case_mount_width) +
-                        CaseProperties.screw_black_offset_xy)
-    }
+    screw_info_dict = {
+        'screw_ne': ScrewInfo(ScrewSilver,
+                              CaseProperties.pcb_offset +
+                              vector3(0, 0, -CaseProperties.case_mount_width) +
+                              Pcb.hole_vector_ne),
+        'screw_sw': ScrewInfo(ScrewSilver, CaseProperties.pcb_offset +
+                              vector3(0, 0, -CaseProperties.case_mount_width) +
+                              Pcb.hole_vector_sw),
+        'screw_black': ScrewInfo(ScrewBlack,
+                                 CaseProperties.pcb_offset +
+                                 vector3(0, 0, -CaseProperties.case_mount_width) +
+                                 CaseProperties.screw_black_offset_xy)
+    }  # type: dict[str, ScrewInfo]
 
     def __init__(self):
         screw_dict = {
-            k: Screw().transformed(move(v))
-            for k, v in self.vectors_dict.items()
+            k: info.screw_class().transformed(move(info.screw_offset))
+            for k, info in self.screw_info_dict.items()
         }
         super().__init__(**screw_dict)
