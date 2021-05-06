@@ -278,18 +278,23 @@ class CaseBottom(SimpleZenObj):
         ))
         case = case - contact_pads_hole
 
-        case = case - device.power_terminals.bbox().with_border(1.0).to_zen_box()
-        case = case - device.surface_mount.bbox().with_border(1.0).to_zen_box()
-        case = case - device.quarts.bbox().with_border(1.0).to_zen_box()
-        case = case - device.lcd_mount.bbox().with_border(1.0).to_zen_box()
-        case = case - device.socket_terminals.bbox().with_border(1.0).to_zen_box()
-        case = case - device.button_mount.bbox().with_border(1.0).to_zen_box()
+        for obj in [
+            device.power_terminals,
+            device.surface_mount,
+            device.quarts,
+            device.lcd_mount,
+            device.socket_terminals,
+            device.button_mount,
+        ]:
+            case = case - obj.bbox().with_border(CaseProperties.default_margin).to_zen_box()
 
         lock_bbox = device.lcd_lock1.bbox()  # type: BBox
-        case = case - (cylinder(r=LcdLock1.radius + 1.0, h=LcdLock1.height + 2 * 1.0, center=True)
+        case = case - (cylinder(r=LcdLock1.radius + CaseProperties.default_margin,
+                                h=LcdLock1.height + 2 * CaseProperties.default_margin, center=True)
                        .move(lock_bbox.center_offset))
         lock_bbox = device.lcd_lock2.bbox()  # type: BBox
-        case = case - (cylinder(r=LcdLock2.radius + 1.0, h=LcdLock2.height + 2 * 1.0, center=True)
+        case = case - (cylinder(r=LcdLock2.radius + CaseProperties.default_margin,
+                                h=LcdLock2.height + 2 * CaseProperties.default_margin, center=True)
                        .move(lock_bbox.center_offset))
 
         for info in PcbScrews.screw_info_dict.values():
