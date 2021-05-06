@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from api import CompoundZenObj
-from case_model import CaseProperties, CaseBottom, CaseTop, PcbScrews, CaseScrews
+from case_model import CaseProperties, CaseBottom, CaseTop, CaseScrews
 from device_model import Battery, Device, Pcb
 from slices_model import *
 
@@ -13,13 +13,11 @@ def main():
     battery = Battery().transformed(move(CaseProperties.battery_offset))
     case_bottom = CaseBottom(device, battery)
     case_top = CaseTop(device, battery)
-    pcb_screws = PcbScrews()
     case_screws = CaseScrews()
 
     internals = CompoundZenObj(
         device,
         battery,
-        pcb_screws,
         case_screws,
     )
     case = CompoundZenObj(
@@ -42,7 +40,7 @@ def main():
 
     # trans = trans * SliceShape(device.button_cap, normal_vector=(-1, 1, 0))
 
-    # trans = SliceShape(device.lcd_lock2, normal_vector=(0, 0, -1))
+    trans = SliceShape(device.lcd_lock2, normal_vector=(0, 0, -1))
     # trans = trans * SliceShape(device.lcd_lock1, normal_vector=(0, 1, 0))
 
     # trans = SlicePoint(Pcb.hole_vector_nw + CaseProperties.pcb_offset)
@@ -55,6 +53,9 @@ def main():
     # trans = SlicePoint(CaseProperties.screw_black_offset, normal_vector=(0, 0, -1),
     #                    trans=lambda shape: shape.moveZ(-0.05))
     # trans = SlicePoint(vector3(0, 0, 0.01), normal_vector=(0, 0, -1))
+
+    # trans = SlicePoint(vector3(0, 0, device.pcb.bbox().zmax + 0.1), normal_vector=(0, 0, -1))
+    # trans = SlicePoint(vector3(0, 0, device.pcb.bbox().zmin - 0.1), normal_vector=(0, 0, 1))
 
     all_objects.display(trans=trans)
 
