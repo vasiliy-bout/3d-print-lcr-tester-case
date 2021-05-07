@@ -206,15 +206,23 @@ class CompoundZenObj(ZenObj):
         :type kwargs: ZenObj
         """
         super().__init__(colour)
-        self.objects = list(args)
-        self.objects_dict = dict(**kwargs)
+        self.__objects = list(args)
+        self.__objects_dict = dict(**kwargs)
+        self.__hidden = []
+
+    def hide(self, name):
+        self.__hidden.append(name)
 
     def __all_objects(self):
-        return self.objects + [o for o in self.objects_dict.values()]
+        return self.__objects + [o for o in self.__objects_dict.values()]
 
     def display(self, trans=None, colour=None):
-        for o in self.__all_objects():
+        for o in self.__objects:
             o.display(trans, colour=colour or self.colour)
+
+        for k, o in self.__objects_dict.items():
+            if k not in self.__hidden:
+                o.display(trans, colour=colour or self.colour)
 
     def bbox(self):
         boxes = [o.bbox() for o in self.__all_objects()]
@@ -225,8 +233,8 @@ class CompoundZenObj(ZenObj):
         )
 
     def transformed(self, trans):
-        objects = [o.transformed(trans) for o in self.objects]
-        objects_dict = {k: v.transformed(trans) for k, v in self.objects_dict.items()}
+        objects = [o.transformed(trans) for o in self.__objects]
+        objects_dict = {k: v.transformed(trans) for k, v in self.__objects_dict.items()}
         return CompoundZenObj(*objects, colour=self.colour, **objects_dict)
 
     def __getitem__(self, item):
@@ -235,16 +243,16 @@ class CompoundZenObj(ZenObj):
         :rtype: ZenObj
         """
         if isinstance(item, int):
-            return self.objects[item]
+            return self.__objects[item]
         else:
-            return self.objects_dict[item]
+            return self.__objects_dict[item]
 
     def __getattr__(self, item):
         """
         :type item: str
         :rtype: ZenObj
         """
-        return self.objects_dict[item]
+        return self.__objects_dict[item]
 
 
 class SimpleZenObj(ZenObj):

@@ -36,7 +36,13 @@ def export(name, shape, path, delta):
 
 
 def display_model(all_objects):
-    all_objects.display()
+    trans = None
+    # trans = debug_transformations(all_objects.internals.device)
+
+    all_objects.hide('internals')
+    all_objects.case.hide('top')
+
+    all_objects.display(trans=trans)
     show(standalone=True)
 
 
@@ -45,24 +51,54 @@ def create_model():
     battery = Battery().transformed(move(CaseProperties.battery_offset))
     case_bottom = CaseBottom(device, battery)
     case_top = CaseTop(device, battery)
-    case_screws = CaseScrews()
+    screws = CaseScrews()
 
     internals = CompoundZenObj(
-        device,
-        battery,
-        case_screws,
+        device=device,
+        battery=battery,
+        screws=screws,
     )
     case = CompoundZenObj(
         top=case_top,
         bottom=case_bottom,
     )
-
     all_objects = CompoundZenObj(
-        internals,
+        internals=internals,
         case=case,
     )
-
     return all_objects
+
+
+def debug_transformations(device):
+    if device is None:
+        return None
+
+    trans = None
+
+    # trans = SliceShape(device.button_cap)
+    # trans = SliceShape(device.button_cap, normal_vector=(-1, 0, 0))
+    # trans = SliceShape(device.lcd_screen)
+    # trans = SliceShape(device.lcd_screen, normal_vector=(-1, 0, 0))
+    # trans = SliceShape(device.contact_pads, normal_vector=(-1, 0, 0))
+    # trans = trans * SliceShape(device.button_cap, normal_vector=(-1, 1, 0))
+    # trans = SliceShape(device.lcd_lock2, normal_vector=(0, 0, -1))
+
+    trans = SliceShape(device.lcd_wires, normal_vector=(-1, 0, 0))
+
+    # trans = trans * SliceShape(device.lcd_lock1, normal_vector=(0, 1, 0))
+    # trans = SlicePoint(Pcb.hole_vector_nw + CaseProperties.pcb_offset)
+    # trans = SlicePoint(Pcb.hole_vector_nw + CaseProperties.pcb_offset, normal_vector=(-1, 0, 0))
+    # trans = SlicePoint(Pcb.hole_vector_se + CaseProperties.pcb_offset)
+    # trans = SlicePoint(Pcb.hole_vector_se + CaseProperties.pcb_offset, normal_vector=(-1, 0, 0))
+    # trans = SlicePoint(CaseProperties.screw_black_offset)
+    # trans = SlicePoint(CaseProperties.screw_black_offset, normal_vector=(-1, 0, 0))
+    # trans = SlicePoint(CaseProperties.screw_black_offset, normal_vector=(0, 0, -1),
+    #                    trans=lambda shape: shape.moveZ(-0.05))
+    # trans = SlicePoint(vector3(0, 0, 0.01), normal_vector=(0, 0, -1))
+    # trans = SlicePoint(vector3(0, 0, device.pcb.bbox().zmax + 0.1), normal_vector=(0, 0, -1))
+    # trans = SlicePoint(vector3(0, 0, device.pcb.bbox().zmin - 0.1), normal_vector=(0, 0, 1))
+
+    return trans
 
 
 if __name__ == '__main__':
