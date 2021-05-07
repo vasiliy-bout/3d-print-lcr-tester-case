@@ -11,7 +11,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--top')
     parser.add_argument('--bottom')
-    parser.add_argument('--delta', type=float, default=0.02)
+    parser.add_argument('--delta', type=float, default=0.01)
     args = parser.parse_args()
 
     run(args.top, args.bottom, args.delta)
