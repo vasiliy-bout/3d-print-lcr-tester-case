@@ -7,6 +7,10 @@ Tester PCB design may vary over time, so be sure that your tester PCB has
 matching dimensions, SMD components placement, wiring placement, and so on.
 I bought my tester device [here on AliExpress](https://www.aliexpress.com/item/32774177793.html).
 
+The design was inspired by https://www.thingiverse.com/thing:1685541. I got a different
+version of the tester which didn't fit into that case, so I decided to create a clone
+for my version of the tester.
+
 ## Dependencies
 
 Scripts require Python3. Tested with Python 3.8.
