@@ -409,6 +409,18 @@ class CaseBottom(SimpleZenObj):
                                 h=LcdLock2.height + 2 * CaseProperties.default_margin, center=True)
                        .move(lock_bbox.center_offset))
 
+        lcd_wires_bbox = device.lcd_wires.bbox()  # type: BBox
+        lcd_wires_bbox = lcd_wires_bbox.with_border_x(CaseProperties.default_margin)
+        lcd_wires_bbox = lcd_wires_bbox.with_border_y(CaseProperties.default_margin)
+        lcd_wires_hole = box(size=(
+            lcd_wires_bbox.size.x, lcd_wires_bbox.size.y,
+            lcd_wires_bbox.size.z + CaseProperties.smd_margin
+        )).move(vector3(
+            lcd_wires_bbox.offset.x, lcd_wires_bbox.offset.y,
+            lcd_wires_bbox.offset.z - CaseProperties.smd_margin
+        ))
+        case = case - lcd_wires_hole
+
         power_terminals_bbox = device.power_terminals.bbox()  # type: BBox
         power_terminals_bbox = power_terminals_bbox.with_border(CaseProperties.default_margin)
         battery_wires_hole = cylinder(
