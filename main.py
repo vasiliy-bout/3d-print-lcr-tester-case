@@ -21,15 +21,23 @@ def run(top_file, bottom_file, delta):
     all_objects = create_model()
 
     if not (top_file or bottom_file):
-        all_objects.display()
-        show(standalone=True)
+        display_model(all_objects)
     else:
         if top_file:
-            print(f'Writing "top" model to {top_file}...')
-            to_stl(all_objects.case.top.shape, top_file, delta)
+            export("top", all_objects.case.top.shape, top_file, delta)
         if bottom_file:
-            print(f'Writing "bottom" model to {bottom_file}...')
-            to_stl(all_objects.case.bottom.shape, bottom_file, delta)
+            export("bottom", all_objects.case.bottom.shape, bottom_file, delta)
+
+
+def export(name, shape, path, delta):
+    print(f'Writing "{name}" model to {path}...')
+    to_stl(shape, path, delta)
+    print('Ok')
+
+
+def display_model(all_objects):
+    all_objects.display()
+    show(standalone=True)
 
 
 def create_model():
